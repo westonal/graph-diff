@@ -19,7 +19,7 @@ class Graph(object):
         return set(self._nodes)
 
     def __str__(self):
-        return f"Graph with {len(self.nodes)} and {len(self.edges)}"
+        return f"Graph with {len(self.nodes)} nodes and {len(self.edges)} edges"
 
 
 @attr.s(frozen=True, auto_attribs=True)

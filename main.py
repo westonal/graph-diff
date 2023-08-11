@@ -1,17 +1,17 @@
 import os.path
 import re
 
+from gvgen import GvGen
 from rich import print as rprint, inspect
 
 from lib.Graph import Graph, Edge
 
 
-def stage1():
+def dependencies_to_graph(input_file: str, output_file: str):
     # file = "~/signal-deps.txt"
-    file = "output/dependencies.txt"
     stack = []
-    with open(os.path.expanduser(file)) as file:
-        with open("output/output.txt", "w") as output:
+    with open(os.path.expanduser(input_file)) as file:
+        with open(output_file, "w") as output:
             for line in file.readlines():
                 if not stack:
                     app = re.search("Project '([^']*)'", line)
@@ -29,10 +29,10 @@ def stage1():
                         rprint(f"{top} -> {module}", file=output)
 
 
-def stage2():
+def load_graph(input_file: str):
     graph = Graph()
-    with open("output/output.txt", "r") as input:
-        for line in input.readlines():
+    with open(input_file, "r") as file:
+        for line in file.readlines():
             search = re.search(r"(\S*) -> (\S*)", line)
             if not search:
                 rprint("[red]Malformed input [line]")
@@ -41,15 +41,29 @@ def stage2():
             rprint(f"[cyan]{node_a}[/cyan] depends on [cyan]{node_b}[/cyan]")
             rprint(Edge(node_a, node_b))
             graph.add_edge(Edge(node_a, node_b))
-
-    inspect(graph.nodes)
-    inspect(graph.edges)
     rprint(graph)
+    return graph
+
+
+def gen(graph: Graph):
+    dot = GvGen()
+    nodes = {}
+    for node in graph.nodes:
+        nodes[node] = dot.newItem(node)
+    for edge in graph.edges:
+        dot.newLink(nodes[edge.a], nodes[edge.b])
+    with open("output/graph.dot", "w") as file:
+        dot.dot(file)
+
+
+def main():
+    dependencies_to_graph(input_file="output/dependencies.txt", output_file="output/output.txt")
+    g = load_graph(input_file="output/output.txt")
+    gen(g)
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    stage1()
-    stage2()
+    main()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
