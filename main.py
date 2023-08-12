@@ -4,7 +4,7 @@ import re
 from gvgen import GvGen
 from rich import print as rprint, inspect
 
-from lib.Graph import Graph, Edge, GraphDelta
+import networkx as nx
 
 
 def dependencies_to_graph(input_file: str, output_file: str):
@@ -30,7 +30,7 @@ def dependencies_to_graph(input_file: str, output_file: str):
 
 
 def load_graph(input_file: str):
-    graph = Graph()
+    graph = nx.DiGraph()
     with open(input_file, "r") as file:
         for line in file.readlines():
             search = re.search(r"(\S*) -> (\S*)", line)
@@ -39,50 +39,70 @@ def load_graph(input_file: str):
             node_a = search.group(1)
             node_b = search.group(2)
             rprint(f"[cyan]{node_a}[/cyan] depends on [cyan]{node_b}[/cyan]")
-            rprint(Edge(node_a, node_b))
-            graph.add_edge(Edge(node_a, node_b))
+            graph.add_edge(node_a, node_b)
     rprint(graph)
     return graph
 
 
-def gen(graph: Graph):
+def gen(graph: nx.DiGraph):
     dot = GvGen()
     nodes = {}
     for node in graph.nodes:
         nodes[node] = dot.newItem(node)
     for edge in graph.edges:
-        dot.newLink(nodes[edge.a], nodes[edge.b])
+        dot.newLink(nodes[edge[0]], nodes[edge[1]])
     with open("output/graph.dot", "w") as file:
         dot.dot(file)
 
 
-def gen_delta(graphDelta: GraphDelta, new_color="#158510", old_color="#ff0000"):
+def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000"):
     dot = GvGen()
     dot.styleDefaultAppend("shape", "rectangle")
-    graph = graphDelta.graph
+    graph = graph_delta
     nodes = {}
+    new_nodes = graph.nodes(data="new", default=False)
+    old_nodes = graph.nodes(data="old", default=False)
     for node in sorted(graph.nodes):
         dot_node = dot.newItem(node)
         nodes[node] = dot_node
         color = None
-        if node in graphDelta.new_nodes:
+        if new_nodes[node]:
             color = new_color
-        elif node in graphDelta.removed_nodes:
+        elif old_nodes[node]:
             color = old_color
         if color:
             dot.propertyAppend(dot_node, "color", color)
             dot.propertyAppend(dot_node, "fontcolor", color)
-    for edge in graph.edges:
-        link = dot.newLink(nodes[edge.a], nodes[edge.b])
+    for u, v, data in graph.edges.data():
+        link = dot.newLink(nodes[u], nodes[v])
         color = None
-        if edge in graphDelta.new_edges:
+        if data.get("new"):
             color = new_color
-        elif edge in graphDelta.removed_edges:
+        elif data.get("old"):
             color = old_color
         if color:
             dot.propertyAppend(link, "color", color)
     with open("output/graph.dot", "w") as file:
         dot.dot(file)
+
+
+def compare_graph(older, newer):
+    """Self is the older graph, and this compares to a newer graph, the output is only changed edges and affected
+    nodes"""
+    new_edges = newer.edges - older.edges
+    removed_edges = older.edges - newer.edges
+    graph = nx.DiGraph()
+    for edge in new_edges:
+        graph.add_edge(edge[0], edge[1])
+        graph.edges[edge[0], edge[1]]["new"] = True
+    for edge in removed_edges:
+        graph.add_edge(edge[0], edge[1])
+        graph.edges[edge[0], edge[1]]["old"] = True
+    for new_node in newer.nodes - older.nodes:
+        graph.nodes[new_node]["new"] = True
+    for old_node in older.nodes - newer.nodes:
+        graph.nodes[old_node]["old"] = True
+    return graph
 
 
 def main():
@@ -92,9 +112,11 @@ def main():
 
     g1 = load_graph(input_file="examples/revision1.deps")
     g2 = load_graph(input_file="examples/revision2.deps")
-    g3 = g1.compare_graph(g2)
-
+    g3 = compare_graph(g1, g2)
     gen_delta(g3)
+    # g3 = g1.compare_graph(g2)
+    #
+    # gen_delta(g3)
 
 
 # Press the green button in the gutter to run the script.
