@@ -1,0 +1,3 @@
+:app -> :lib-a
+:lib-a -> :lib-b
+:app -> :lib-b
