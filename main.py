@@ -82,6 +82,8 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000"):
             color = old_color
         if color:
             dot.propertyAppend(link, "color", color)
+        if data.get("indirect"):
+            dot.propertyAppend(link, "style", "dashed")
     with open("output/graph.dot", "w") as file:
         dot.dot(file)
 
@@ -92,23 +94,37 @@ def compare_graph(older, newer):
     new_edges = newer.edges - older.edges
     removed_edges = older.edges - newer.edges
     graph = nx.DiGraph()
-    for edge in new_edges:
-        graph.add_edge(edge[0], edge[1])
-        graph.edges[edge[0], edge[1]]["new"] = True
-    for edge in removed_edges:
-        graph.add_edge(edge[0], edge[1])
-        graph.edges[edge[0], edge[1]]["old"] = True
-    for new_node in newer.nodes - older.nodes:
+    visible_nodes = set()
+    for u, v in new_edges:
+        graph.add_edge(u, v)
+        graph.edges[u, v]["new"] = True
+        visible_nodes.update({u, v})
+    for u, v in removed_edges:
+        graph.add_edge(u, v)
+        graph.edges[u, v]["old"] = True
+        visible_nodes.update({u, v})
+    new_nodes = newer.nodes - older.nodes
+    for new_node in new_nodes:
         graph.nodes[new_node]["new"] = True
-    for old_node in older.nodes - newer.nodes:
+    old_nodes = older.nodes - newer.nodes
+    for old_node in old_nodes:
         graph.nodes[old_node]["old"] = True
+    # Add edges for all affected nodes with indirect connections
+    pairs = dict(nx.all_pairs_bellman_ford_path_length(newer))
+    rprint(pairs)
+    for u in visible_nodes:
+        for v in visible_nodes:
+            if ((pairs.get(u) or {}).get(v) or 0) > 1:
+                graph.add_edge(u, v)
+                graph.edges[u, v]["indirect"] = True
+
     return graph
 
 
 def main():
     dependencies_to_graph(input_file="output/dependencies.txt", output_file="output/sample.deps")
     g = load_graph(input_file="examples/revision1.deps")
-    gen(g)
+    gen_delta(g)
 
     g1 = load_graph(input_file="examples/revision1.deps")
     g2 = load_graph(input_file="examples/revision2.deps")

@@ -1,3 +1,7 @@
 :app -> :lib-a
 :lib-a -> :lib-b
 :app -> :lib-b
+:app -> :lib-d
+:app -> :lib-e
+:lib-e -> :lib-f
+:lib-a -> :lib-f
