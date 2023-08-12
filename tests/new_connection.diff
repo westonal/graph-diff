@@ -1,0 +1,7 @@
+> Before
+a -> b
+b -> c
+> After
+a -> b
+b -> c
+a -> c
