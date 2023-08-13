@@ -104,8 +104,7 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
 
 
 def compare_graph(older, newer):
-    """Self is the older graph, and this compares to a newer graph, the output is only changed edges and affected
-    nodes"""
+    """The output is only changed edges and affected nodes"""
     new_edges = newer.edges - older.edges
     removed_edges = older.edges - newer.edges
     graph = nx.DiGraph()
@@ -130,7 +129,7 @@ def compare_graph(older, newer):
     pairs = dict(nx.all_pairs_bellman_ford_path_length(newer))
     for u in visible_nodes:
         for v in visible_nodes:
-            distance = ((pairs.get(u) or {}).get(v) or 0)
+            distance = (pairs.get(u) or {}).get(v) or 0
             if distance == 1:
                 graph.add_edge(u, v)
                 new_visible_graph.add_edge(u, v)
@@ -138,8 +137,8 @@ def compare_graph(older, newer):
     graph_paths = dict(nx.all_pairs_bellman_ford_path_length(new_visible_graph))
     for u in visible_nodes:
         for v in visible_nodes:
-            distance = ((pairs.get(u) or {}).get(v) or 0)
-            visible_distance = ((graph_paths.get(u) or {}).get(v) or 0)
+            distance = (pairs.get(u) or {}).get(v) or 0
+            visible_distance = (graph_paths.get(u) or {}).get(v) or 0
             if visible_distance == 0 and distance > 1:
                 graph.add_edge(u, v)
                 graph.edges[u, v]["indirect"] = True
