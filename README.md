@@ -17,7 +17,7 @@ Create a file with gradle dependencies. You may need to customize the main app n
 
 ```shell
 cd sample
-gradle -q :app:dependencies --configuration runtimeClasspath > ../output/dependencies.txt
+gradle -q :app:dependencies --configuration runtimeClasspath > ../examples/dependencies.txt
 ```
 
 Start the python virtual environment. On mac:
@@ -32,5 +32,6 @@ Pass this file into main and then out to `dot`:
 
 ```shell
 python3 main.py
-dot -Tpng output/graph.dot -o output/graph.png
+dot -Tpng output/sample.dot -o output/sample.png
+dot -Tpng output/example.dot -o output/example.png
 ```

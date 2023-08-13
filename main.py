@@ -3,10 +3,9 @@ import re
 import subprocess
 from pathlib import Path
 
-from gvgen import GvGen
-from rich import print as rprint, inspect
-
 import networkx as nx
+from gvgen import GvGen
+from rich import print as rprint
 
 
 def dependencies_to_graph(input_file: str, output_file: str):
@@ -20,7 +19,7 @@ def dependencies_to_graph(input_file: str, output_file: str):
                     if app:
                         stack.append(app.group(1))
                 else:
-                    search = re.search(r"((?:[\\| ]    |[\\+]--- )*)project ([^ \n]*)", line)
+                    search = re.search(r"((?:[\\| ] {4}|[\\+]--- )*)project ([^ \n]*)", line)
                     if search:
                         module = search.group(2)
                         depth = len(search.group(1)) // 5
@@ -67,9 +66,7 @@ def gen(graph: nx.DiGraph):
 
 
 def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
-              file=None):
-    if not file:
-        file = Path("output/graph2.dot")
+              file=Path("output/graph.dot")):
     dot = GvGen()
     dot.styleDefaultAppend("shape", "rectangle")
     graph = graph_delta
@@ -147,14 +144,14 @@ def compare_graph(older, newer):
 
 
 def main():
-    dependencies_to_graph(input_file="sample/dependencies.txt", output_file="output/sample.deps")
-    g = load_graph(input_file="examples/revision1.deps")
-    gen_delta(g)
+    dependencies_to_graph(input_file="examples/dependencies.txt", output_file="output/sample.deps")
+    g = load_graph(input_file="output/sample.deps")
+    gen_delta(g, file=Path("output/sample.dot"))
 
     g1 = load_graph(input_file="examples/revision1.deps")
     g2 = load_graph(input_file="examples/revision2.deps")
     g3 = compare_graph(g1, g2)
-    gen_delta(g3)
+    gen_delta(g3, file=Path("output/example.dot"))
     # g3 = g1.compare_graph(g2)
     #
     # gen_delta(g3)
@@ -184,7 +181,7 @@ def run_tests(dir):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # main()
     run_tests("tests")
+    main()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
