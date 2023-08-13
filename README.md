@@ -35,3 +35,10 @@ python3 main.py
 dot -Tpng output/sample.dot -o output/sample.png
 dot -Tpng output/example.dot -o output/example.png
 ```
+
+Uses
+===
+
+- [GvGen](https://github.com/stricaud/gvgen) for dot file generation
+- [NetworkX](https://github.com/networkx/networkx) for graph analysis
+- [Rich](https://github.com/Textualize/rich) for CLI formatting

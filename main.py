@@ -65,16 +65,49 @@ def gen(graph: nx.DiGraph):
         dot.dot(file)
 
 
+class Renderer(object):
+
+    def __init__(self, split_on=":"):
+        self.split_on = split_on
+        self.dot = GvGen()
+        self.nodes = {}
+
+    def find_parent(self, parents):
+        key = tuple(parents)
+        parent_node = self.nodes.get(key, None)
+        if not parent_node:
+            if len(parents) == 1:
+                parent_node = self.dot.newItem(parents[0])
+                self.nodes[key] = parent_node
+            else:
+                grand_parent = self.find_parent(parents[0:-1])
+                parent_node = self.dot.newItem(parents[1], parent=grand_parent)
+                self.nodes[key] = parent_node
+        return parent_node
+
+
 def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
               file=Path("output/graph.dot")):
-    dot = GvGen()
+    r = Renderer()
+    dot = r.dot
     dot.styleDefaultAppend("shape", "rectangle")
     graph = graph_delta
-    nodes = {}
+    nodes = r.nodes
     new_nodes = graph.nodes(data="new", default=False)
     old_nodes = graph.nodes(data="old", default=False)
+    parents = graph.nodes(data="parent", default=None)
+    labels = graph.nodes(data="label", default=None)
+    # Construct all subgraphs first due to GvGen limitation/bug https://github.com/stricaud/gvgen/issues/12
+    for (node, parent) in parents:
+        if parent:
+            r.find_parent(parent)
     for node in sorted(graph.nodes):
-        dot_node = dot.newItem(node)
+        parent_node = None
+        node_parent = parents[node]
+        if node_parent:
+            parent_node = r.find_parent(node_parent)
+        label = labels[node] or node
+        dot_node = dot.newItem(label, parent=parent_node)
         nodes[node] = dot_node
         color = None
         if new_nodes[node]:
@@ -100,7 +133,7 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
         dot.dot(file)
 
 
-def compare_graph(older, newer):
+def compare_graph(older, newer, parent_function=None):
     """The output is only changed edges and affected nodes"""
     new_edges = newer.edges - older.edges
     removed_edges = older.edges - newer.edges
@@ -122,6 +155,11 @@ def compare_graph(older, newer):
     old_nodes = older.nodes - newer.nodes
     for old_node in old_nodes:
         graph.nodes[old_node]["old"] = True
+    if parent_function:
+        for node in visible_nodes:
+            parents, name = parent_function(node)
+            graph.nodes[node]["parent"] = parents
+            graph.nodes[node]["label"] = name
     # Add existing edges for visible nodes that are linked
     pairs = dict(nx.all_pairs_bellman_ford_path_length(newer))
     for u in visible_nodes:
@@ -169,7 +207,7 @@ def run_tests(dir):
                 after = lines.index("> After\n")
                 before = load_graph_from_lines(lines[1:after])
                 after = load_graph_from_lines(lines[after + 1:])
-                compared = compare_graph(before, after)
+                compared = compare_graph(before, after, parent_function=gradle_split)
                 test_output_dot = Path(os.path.join("test_output", file_path)).with_suffix(".dot")
                 test_output_png = Path(os.path.join("output", file_path)).with_suffix(".png")
                 gen_delta(compared, file=test_output_dot)
@@ -177,6 +215,14 @@ def run_tests(dir):
                 subprocess.run(["dot", "-Tpng", test_output_dot, "-o", test_output_png])
         if os.path.isdir(file_path):
             run_tests(file_path)
+
+
+def gradle_split(name):
+    split = re.findall(r":[^:]+", name)
+    if not split:
+        return [], name
+    else:
+        return split[0:-1], split[-1]
 
 
 # Press the green button in the gutter to run the script.
