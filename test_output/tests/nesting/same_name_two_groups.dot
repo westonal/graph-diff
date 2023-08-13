@@ -2,12 +2,12 @@
 
 digraph G {
 compound=true;
-   subgraph cluster1 {
+   subgraph cluster2 {
    shape="rectangle";
 label=":g1";
       node3 [shape="rectangle",label=":a"];
    }
-   subgraph cluster2 {
+   subgraph cluster1 {
    shape="rectangle";
 label=":g2";
       node4 [shape="rectangle",label=":a"];

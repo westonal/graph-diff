@@ -72,16 +72,25 @@ class Renderer(object):
         self.dot = GvGen()
         self.nodes = {}
 
-    def find_parent(self, parents):
-        key = tuple(parents)
+    def find_parent(self, parents_with_state, parent=None, new_color="#158510", old_color="#ff0000"):
+        key = tuple(map(lambda p: p[0], parents_with_state))
         parent_node = self.nodes.get(key, None)
         if not parent_node:
-            if len(parents) == 1:
-                parent_node = self.dot.newItem(parents[0])
+            if len(parents_with_state) == 1:
+                parent_name, state = parents_with_state[0]
+                parent_node = self.dot.newItem(parent_name, parent=parent)
+                color = None
+                if state == "newer":
+                    color = new_color
+                elif state == "older":
+                    color = old_color
+                if color:
+                    self.dot.propertyAppend(parent_node, "color", color)
+                    self.dot.propertyAppend(parent_node, "fontcolor", color)
                 self.nodes[key] = parent_node
             else:
-                grand_parent = self.find_parent(parents[0:-1])
-                parent_node = self.dot.newItem(parents[1], parent=grand_parent)
+                grand_parent = self.find_parent(parents_with_state[0:-1])
+                parent_node = self.find_parent(parents_with_state[-1:], parent=grand_parent)
                 self.nodes[key] = parent_node
         return parent_node
 
@@ -140,6 +149,21 @@ def compare_graph(older, newer, parent_function=None):
     graph = nx.DiGraph()
     new_visible_graph = nx.DiGraph()
     visible_nodes = set()
+
+    def all_parents(nodes):
+        result = set()
+        for n in nodes:
+            p, _ = parent_function(n)
+            result.update(expand(p))
+        return result
+
+    def expand(p):
+        result = list()
+        if p:
+            for i in range(1, len(p) + 1):
+                result += [tuple(p[0:i])]
+        return result
+
     for u, v in new_edges:
         graph.add_edge(u, v)
         graph.edges[u, v]["new"] = True
@@ -156,10 +180,29 @@ def compare_graph(older, newer, parent_function=None):
     for old_node in old_nodes:
         graph.nodes[old_node]["old"] = True
     if parent_function:
+        old_parents = all_parents(older.nodes)
+        new_parents = all_parents(newer.nodes)
+        older_parents = old_parents - new_parents
+        newer_parents = new_parents - old_parents
+
+        def get_state(expanded):
+            state = None
+            if expanded in newer_parents:
+                state = "newer"
+            elif expanded in older_parents:
+                state = "older"
+            return state
+
+        def get_states(p):
+            expanded = expand(p)
+            return zip(p, list(map(get_state, expanded)))
+
         for node in visible_nodes:
             parents, name = parent_function(node)
-            graph.nodes[node]["parent"] = parents
-            graph.nodes[node]["label"] = name
+            if parents:
+                states = list(get_states(parents))
+                graph.nodes[node]["parent"] = states
+                graph.nodes[node]["label"] = name
     # Add existing edges for visible nodes that are linked
     pairs = dict(nx.all_pairs_bellman_ford_path_length(newer))
     for u in visible_nodes:
@@ -199,28 +242,32 @@ def run_tests(dir):
     rprint(f"[yellow][bold]Running test suite: [cyan]{dir}[/cyan]")
     for file_path in map(lambda p: os.path.join(dir, p), os.listdir(dir)):
         if os.path.isfile(file_path):
-            rprint(f"[yellow][bold]Running test [cyan]{file_path}[/cyan]")
-            with open(file_path) as file:
-                lines = file.readlines()
-                if lines[0] != "> Before\n":
-                    fail('First line must be "> Before"')
-                after = lines.index("> After\n")
-                before = load_graph_from_lines(lines[1:after])
-                after = load_graph_from_lines(lines[after + 1:])
-                compared = compare_graph(before, after, parent_function=gradle_split)
-                test_output_dot = Path(os.path.join("test_output", file_path)).with_suffix(".dot")
-                test_output_png = Path(os.path.join("output", file_path)).with_suffix(".png")
-                gen_delta(compared, file=test_output_dot)
-                os.makedirs(test_output_png.parent, exist_ok=True)
-                subprocess.run(["dot", "-Tpng", test_output_dot, "-o", test_output_png])
+            run_test(file_path)
         if os.path.isdir(file_path):
             run_tests(file_path)
+
+
+def run_test(file_path):
+    rprint(f"[yellow][bold]Running test [cyan]{file_path}[/cyan]")
+    with open(file_path) as file:
+        lines = file.readlines()
+        if lines[0] != "> Before\n":
+            fail('First line must be "> Before"')
+        after = lines.index("> After\n")
+        before = load_graph_from_lines(lines[1:after])
+        after = load_graph_from_lines(lines[after + 1:])
+        compared = compare_graph(before, after, parent_function=gradle_split)
+        test_output_dot = Path(os.path.join("test_output", file_path)).with_suffix(".dot")
+        test_output_png = Path(os.path.join("output", file_path)).with_suffix(".png")
+        gen_delta(compared, file=test_output_dot)
+        os.makedirs(test_output_png.parent, exist_ok=True)
+        subprocess.run(["dot", "-Tpng", test_output_dot, "-o", test_output_png])
 
 
 def gradle_split(name):
     split = re.findall(r":[^:]+", name)
     if not split:
-        return [], name
+        return None, name
     else:
         return split[0:-1], split[-1]
 
@@ -228,6 +275,7 @@ def gradle_split(name):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     run_tests("tests")
-    main()
+    # main()
+    # run_test("tests/nesting/group_change_inside_unchanging_group.diff")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

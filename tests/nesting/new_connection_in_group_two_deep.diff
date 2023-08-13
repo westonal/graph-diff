@@ -1,0 +1,7 @@
+> Before
+:outer:g1:a -> :outer:g1:b
+:outer:g1:b -> :outer:g2:c
+> After
+:outer:g1:a -> :outer:g1:b
+:outer:g1:b -> :outer:g2:c
+:outer:g1:a -> :outer:g2:c

@@ -1,0 +1,4 @@
+> Before
+:g1:a -> :gx:g2:b
+> After
+:g1:a -> :gx:g3:b
