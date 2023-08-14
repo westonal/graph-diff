@@ -14,7 +14,7 @@ digraph D {
         node5 [color="#158510",fontcolor="#158510",shape="rectangle",label=":c"]
     }
     
-    node3 -> node5 [color="#158510",]
     node3 -> node4 []
+    node3 -> node5 [color="#158510",]
     node4 -> node5 [color="#158510",]
 }

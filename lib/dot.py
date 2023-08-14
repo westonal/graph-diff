@@ -77,11 +77,11 @@ class Dot(object):
         writer = IndentedWriter(file)
         writer.write_line("digraph D {")
         with writer.indent():
-            for node in filter(lambda p: not p.parent, self._nodes.values()):
+            for node in sorted(filter(lambda p: not p.parent, self._nodes.values()), key=lambda n: n.name):
                 self.write_node(writer, node)
                 writer.write_line()
 
-            for link in self._links:
+            for link in sorted(self._links, key=lambda l: (l.u.name, l.v.name)):
                 writer.write_line(f"{link.u.name} -> {link.v.name} [{link.props}]")
         writer.write_line("}")
 

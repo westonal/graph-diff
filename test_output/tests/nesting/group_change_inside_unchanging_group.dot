@@ -28,6 +28,6 @@ digraph D {
         }
     }
     
-    node5 -> node7 [color="#158510",]
     node5 -> node6 [color="#ff0000",]
+    node5 -> node7 [color="#158510",]
 }
