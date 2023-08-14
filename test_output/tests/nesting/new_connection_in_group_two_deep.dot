@@ -7,9 +7,9 @@ digraph D {
             label=":g1";
             shape="rectangle";
             
-            node4 [shape="rectangle",label=":a"]
+            node3 [shape="rectangle",label=":a"]
         }
-        subgraph cluster_node3 { /* :g2 */
+        subgraph cluster_node4 { /* :g2 */
             label=":g2";
             shape="rectangle";
             
@@ -17,5 +17,5 @@ digraph D {
         }
     }
     
-    node4 -> node5 [color="#158510",]
+    node3 -> node5 [color="#158510",]
 }

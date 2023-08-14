@@ -69,7 +69,6 @@ class Renderer(object):
             if len(parents_with_state) == 1:
                 parent_name, state = parents_with_state[0]
                 parent_node = self.dot.new_item(parent_name, parent=parent)
-                rprint(f"Attached {parent_node} to {parent}")
                 color = None
                 if state == "newer":
                     color = new_color
@@ -82,7 +81,6 @@ class Renderer(object):
             else:
                 grand_parent = self.find_parent(parents_with_state[0:-1])
                 parent_node = self.find_parent(parents_with_state[-1:], parent=grand_parent)
-                rprint(f"Attached {parent_node} to {grand_parent}")
                 self.nodes[key] = parent_node
         return parent_node
 
@@ -98,10 +96,6 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
     old_nodes = graph.nodes(data="old", default=False)
     parents = graph.nodes(data="parent", default=None)
     labels = graph.nodes(data="label", default=None)
-    # Construct all subgraphs first due to GvGen limitation/bug https://github.com/stricaud/gvgen/issues/12
-    for (node, parent) in parents:
-        if parent:
-            r.find_parent(parent)
     for node in sorted(graph.nodes):
         parent_node = None
         node_parent = parents[node]

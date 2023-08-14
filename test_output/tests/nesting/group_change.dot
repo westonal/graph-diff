@@ -3,16 +3,7 @@ digraph D {
         label=":g1";
         shape="rectangle";
         
-        node4 [shape="rectangle",label=":a"]
-    }
-    
-    subgraph cluster_node2 { /* :g3 */
-        label=":g3";
-        shape="rectangle";
-        color="#158510";
-        fontcolor="#158510";
-        
-        node6 [color="#158510",fontcolor="#158510",shape="rectangle",label=":b"]
+        node2 [shape="rectangle",label=":a"]
     }
     
     subgraph cluster_node3 { /* :g2 */
@@ -21,9 +12,18 @@ digraph D {
         color="#ff0000";
         fontcolor="#ff0000";
         
-        node5 [color="#ff0000",fontcolor="#ff0000",shape="rectangle",label=":b"]
+        node4 [color="#ff0000",fontcolor="#ff0000",shape="rectangle",label=":b"]
     }
     
-    node4 -> node5 [color="#ff0000",]
-    node4 -> node6 [color="#158510",]
+    subgraph cluster_node5 { /* :g3 */
+        label=":g3";
+        shape="rectangle";
+        color="#158510";
+        fontcolor="#158510";
+        
+        node6 [color="#158510",fontcolor="#158510",shape="rectangle",label=":b"]
+    }
+    
+    node2 -> node4 [color="#ff0000",]
+    node2 -> node6 [color="#158510",]
 }
