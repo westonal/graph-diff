@@ -4,8 +4,9 @@ import subprocess
 from pathlib import Path
 
 import networkx as nx
-from gvgen import GvGen
 from rich import print as rprint
+
+from lib.dot import Dot
 
 
 def dependencies_to_graph(input_file: str, output_file: str):
@@ -54,22 +55,11 @@ def fail(message):
     exit(1)
 
 
-def gen(graph: nx.DiGraph):
-    dot = GvGen()
-    nodes = {}
-    for node in graph.nodes:
-        nodes[node] = dot.newItem(node)
-    for edge in graph.edges:
-        dot.newLink(nodes[edge[0]], nodes[edge[1]])
-    with open("output/graph.dot", "w") as file:
-        dot.dot(file)
-
-
 class Renderer(object):
 
     def __init__(self, split_on=":"):
         self.split_on = split_on
-        self.dot = GvGen()
+        self.dot = Dot()
         self.nodes = {}
 
     def find_parent(self, parents_with_state, parent=None, new_color="#158510", old_color="#ff0000"):
@@ -78,19 +68,21 @@ class Renderer(object):
         if not parent_node:
             if len(parents_with_state) == 1:
                 parent_name, state = parents_with_state[0]
-                parent_node = self.dot.newItem(parent_name, parent=parent)
+                parent_node = self.dot.new_item(parent_name, parent=parent)
+                rprint(f"Attached {parent_node} to {parent}")
                 color = None
                 if state == "newer":
                     color = new_color
                 elif state == "older":
                     color = old_color
                 if color:
-                    self.dot.propertyAppend(parent_node, "color", color)
-                    self.dot.propertyAppend(parent_node, "fontcolor", color)
+                    self.dot.property_append(parent_node, "color", color)
+                    self.dot.property_append(parent_node, "fontcolor", color)
                 self.nodes[key] = parent_node
             else:
                 grand_parent = self.find_parent(parents_with_state[0:-1])
                 parent_node = self.find_parent(parents_with_state[-1:], parent=grand_parent)
+                rprint(f"Attached {parent_node} to {grand_parent}")
                 self.nodes[key] = parent_node
         return parent_node
 
@@ -99,7 +91,7 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
               file=Path("output/graph.dot")):
     r = Renderer()
     dot = r.dot
-    dot.styleDefaultAppend("shape", "rectangle")
+    dot.style_default_append("shape", "rectangle")
     graph = graph_delta
     nodes = r.nodes
     new_nodes = graph.nodes(data="new", default=False)
@@ -116,7 +108,7 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
         if node_parent:
             parent_node = r.find_parent(node_parent)
         label = labels[node] or node
-        dot_node = dot.newItem(label, parent=parent_node)
+        dot_node = dot.new_item(label, parent=parent_node)
         nodes[node] = dot_node
         color = None
         if new_nodes[node]:
@@ -124,19 +116,19 @@ def gen_delta(graph_delta: nx.Graph, new_color="#158510", old_color="#ff0000",
         elif old_nodes[node]:
             color = old_color
         if color:
-            dot.propertyAppend(dot_node, "color", color)
-            dot.propertyAppend(dot_node, "fontcolor", color)
+            dot.property_append(dot_node, "color", color)
+            dot.property_append(dot_node, "fontcolor", color)
     for u, v, data in graph.edges.data():
-        link = dot.newLink(nodes[u], nodes[v])
+        link = dot.new_link(nodes[u], nodes[v])
         color = None
         if data.get("new"):
             color = new_color
         elif data.get("old"):
             color = old_color
         if color:
-            dot.propertyAppend(link, "color", color)
+            dot.property_append(link, "color", color)
         if data.get("indirect"):
-            dot.propertyAppend(link, "style", "dashed")
+            dot.property_append(link, "style", "dashed")
     os.makedirs(Path(file).parent, exist_ok=True)
     with open(file, "w") as file:
         dot.dot(file)
@@ -276,6 +268,6 @@ def gradle_split(name):
 if __name__ == '__main__':
     run_tests("tests")
     # main()
-    # run_test("tests/nesting/group_change_inside_unchanging_group.diff")
+    # run_test("tests/nesting/group_change_inside_changing_group.diff")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
