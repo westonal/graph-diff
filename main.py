@@ -2,6 +2,7 @@ import os.path
 import subprocess
 from pathlib import Path
 
+import click
 from rich import print as rprint
 
 from lib.diff_render import Renderer
@@ -11,17 +12,9 @@ from lib.graph_diff import compare_graph
 from lib.graph_file import load_graph, load_graph_from_lines
 
 
-def main():
-    project_dependencies_to_graph(input_file="examples/dependencies.txt", output_file="output/sample.deps")
-    g = load_graph(input_file="output/sample.deps")
-    Renderer(g).gen_delta(file=Path("output/sample.dot"))
-    render_dot_file(Path("output/sample.dot"), Path("output/sample.png"))
-
-    g1 = load_graph(input_file="examples/revision1.deps")
-    g2 = load_graph(input_file="examples/revision2.deps")
-    g3 = compare_graph(g1, g2)
-    Renderer(g3).gen_delta(file=Path("output/example.dot"))
-    render_dot_file(Path("output/example.dot"), Path("output/example.png"))
+@click.group
+def commands():
+    pass
 
 
 def run_tests(path):
@@ -51,12 +44,46 @@ def run_test(file_path):
 
 
 def render_dot_file(input_dot_path, output_png_path):
-    subprocess.run(["dot", "-Tpng", input_dot_path, "-o", output_png_path])
+    command = ["dot", "-Tpng", input_dot_path, "-o", output_png_path]
+    return_code = subprocess.run(command).returncode
+    if return_code != 0:
+        join = ' '.join(map(lambda a: f"{a}", command))
+        fail(f"Dot failed return code {return_code} [cyan]{join}")
 
 
-# Press the green button in the gutter to run the script.
+def load_graph_from_argument(input_file: str, output_file: str):
+    if Path(input_file).suffix == ".deps":
+        return load_graph(input_file=input_file)
+    else:
+        project_dependencies_to_graph(input_file=input_file, output_file=output_file)
+        return load_graph(input_file=output_file)
+
+
+@commands.command(name="tests")
+@click.argument("path", default="tests")
+def cmd_tests(path):
+    run_tests(path)
+
+
+@commands.command(name="diff")
+@click.argument("file1")
+@click.argument("file2", default="")
+@click.option("--output", "-o", default=None)
+def cmd_diff(file1, file2, output):
+    if file2:
+        g1 = load_graph_from_argument(file1, "output/double_file_1.deps")
+        g2 = load_graph_from_argument(file2, "output/double_file_2.deps")
+        g = compare_graph(g1, g2, parent_function=gradle_split)
+        dot_file_path = Path("output/double_file.dot")
+    else:
+        g = load_graph_from_argument(file1, "output/single_file.deps")
+        dot_file_path = Path("output/single_file.dot")
+    output_png = Path(output) if output else dot_file_path.with_suffix(".png")
+    Renderer(g).gen_delta(file=dot_file_path)
+    os.makedirs(output_png.parent, exist_ok=True)
+    render_dot_file(dot_file_path, output_png)
+    rprint(f"Created [cyan]{output_png}[/cyan]")
+
+
 if __name__ == '__main__':
-    run_tests(Path("tests"))
-    main()
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    commands()
