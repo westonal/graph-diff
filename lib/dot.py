@@ -54,6 +54,7 @@ class Dot(object):
         self._nodes = {}
         self._links = []
         self._node_default_style = Props()
+        self._subgraph_default_style = Props()
 
     def new_item(self, label, parent=None, node_name=None):
         node_name = node_name or self._auto_node_name()
@@ -70,8 +71,11 @@ class Dot(object):
     def property_append(node_or_link, param_key, param_value):
         node_or_link.props[param_key] = param_value
 
-    def style_default_append(self, param_key, param_value):
+    def node_style_default_append(self, param_key, param_value):
         self._node_default_style[param_key] = param_value
+
+    def subgraph_style_default_append(self, param_key, param_value):
+        self._subgraph_default_style[param_key] = param_value
 
     def dot(self, file):
         writer = IndentedWriter(file)
@@ -90,9 +94,9 @@ class Dot(object):
             writer.write_line(f'subgraph cluster_{node.name} {{ /* {node.label} */')
             with writer.indent():
                 writer.write_line(f'label="{node.label}";')
-                writer.write_line(f'shape="rectangle";')
-                for prop in node.props.props:
-                    writer.write_line(f'{prop}="{node.props.props[prop]}";')
+                props = self._subgraph_default_style.override(node.props).props
+                for prop in props:
+                    writer.write_line(f'{prop}="{props[prop]}";')
                 writer.write_line()
                 for child in node.children:
                     self.write_node(writer, child)

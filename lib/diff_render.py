@@ -38,7 +38,10 @@ class Renderer(object):
         return parent_node
 
     def gen_delta(self, file=Path("output/graph.dot")):
-        self.dot.style_default_append("shape", "rectangle")
+        self.dot.node_style_default_append("shape", "rectangle")
+        self.dot.node_style_default_append("fontname", "Courier New")
+        self.dot.subgraph_style_default_append("shape", "rectangle")
+        self.dot.subgraph_style_default_append("fontname", "Courier New")
         new_nodes = self.graph_delta.nodes(data="new", default=False)
         old_nodes = self.graph_delta.nodes(data="old", default=False)
         parents = self.graph_delta.nodes(data="parent", default=None)

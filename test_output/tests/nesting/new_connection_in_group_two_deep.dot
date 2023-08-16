@@ -2,16 +2,19 @@ digraph D {
     subgraph cluster_node1 { /* :outer */
         label=":outer";
         shape="rectangle";
+        fontname="Courier New";
         
         subgraph cluster_node2 { /* :g1 */
             label=":g1";
             shape="rectangle";
+            fontname="Courier New";
             
             node3 [shape="rectangle",label=":a"]
         }
         subgraph cluster_node4 { /* :g2 */
             label=":g2";
             shape="rectangle";
+            fontname="Courier New";
             
             node5 [shape="rectangle",label=":c"]
         }

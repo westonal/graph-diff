@@ -2,6 +2,7 @@ digraph D {
     subgraph cluster_node1 { /* :g1 */
         label=":g1";
         shape="rectangle";
+        fontname="Courier New";
         
         node2 [shape="rectangle",label=":a"]
         node3 [shape="rectangle",label=":c"]

@@ -8,10 +8,10 @@ from lib.error import fail
 def load_graph(input_file: str):
     with open(input_file, "r") as file:
         lines = file.readlines()
-        return load_graph_from_lines(lines)
+        return load_graph_from_deps_lines(lines)
 
 
-def load_graph_from_lines(lines):
+def load_graph_from_deps_lines(lines):
     graph = nx.DiGraph()
     for line in lines:
         search = re.search(r"(\S*) -> (\S*)", line)
