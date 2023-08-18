@@ -2,15 +2,16 @@ import os.path
 import subprocess
 import tempfile
 from pathlib import Path
-from tempfile import gettempdir
 
 import click
+import networkx as nx
 from git import Repo
 from rich import print as rprint
 
 from lib.cd import cd
 from lib.diff_render import Renderer
 from lib.error import fail
+from lib.git_utils import new_temp_worktree
 from lib.gradle import project_dependencies_to_deps, gradle_split, project_dependencies_lines_to_deps
 from lib.graph_diff import compare_graph
 from lib.graph_file import load_graph, load_graph_from_deps_lines
@@ -74,62 +75,69 @@ def cmd_tests(path):
 @click.argument("file2", default="")
 @click.option("--output", "-o", default=None)
 def cmd_diff(file1, file2, output):
+    os.makedirs("output", exist_ok=True)
     if file2:
         g1 = load_graph_from_argument(file1, "output/double_file_1.deps")
         g2 = load_graph_from_argument(file2, "output/double_file_2.deps")
         g = compare_graph(g1, g2, parent_function=gradle_split)
+        ensure_diff_not_empty(g)
         dot_file_path = Path("output/double_file.dot")
+        Renderer(g).gen_delta(file=dot_file_path)
     else:
         g = load_graph_from_argument(file1, "output/single_file.deps")
+        g = compare_graph(nx.DiGraph(), g, parent_function=gradle_split)
         dot_file_path = Path("output/single_file.dot")
+        Renderer(g, new_color="#000000").gen_delta(file=dot_file_path)
     output_png = Path(output) if output else dot_file_path.with_suffix(".png")
-    Renderer(g).gen_delta(file=dot_file_path)
     os.makedirs(output_png.parent, exist_ok=True)
     render_dot_file(dot_file_path, output_png)
     rprint(f"Created [cyan]{output_png}[/cyan]")
 
 
-def create_worktree(repo: Repo, path, commitish):
-    # git worktree add [-f] [--detach] [--checkout] [--lock [--reason <string>]]
-    #	   [-b <new-branch>] <path> [<commit-ish>]
-    # rprint(repo.git.execute(["git", "worktree", "list"]))
-    rprint(repo.git.execute(["git", "worktree", "add", "--detach", path, commitish]))
-
-
-@commands.command(name="git_gradle_diff", hidden=True)  # TODO WIP, needs to clean up
+@commands.command(name="git_gradle_diff")
 @click.argument("repo")
 @click.argument("commitish1")
 @click.argument("commitish2")
+@click.option("--app", "-a", default=":app")
+@click.option("--configuration", "-c", default="releaseRuntimeClasspath")
 @click.option("--output", "-o", default=None)
-def cmd_gradle_diff(repo, commitish1, commitish2, output):
+def cmd_gradle_diff(repo, commitish1, commitish2, app, configuration, output):
     repo = Repo(repo)
-    rprint(repo.remotes)
-    tmp_worktree1 = os.path.join(Path(gettempdir()), "tmp_b")
-    create_worktree(repo, tmp_worktree1, commitish1)
-    tmp_worktree2 = os.path.join(Path(gettempdir()), "tmp_two")
-    # create_worktree(repo, tmp_worktree2, commitish2)
 
-    app_name = "Signal-Android"
-    configuration = "playProdReleaseRuntimeClasspath"
-
-    with cd(tmp_worktree1):
-        result = subprocess.run(["./gradlew", "-q", f":{app_name}:dependencies", "--configuration", configuration],
-                                capture_output=True, text=True)
-    deps = project_dependencies_lines_to_deps(result.stdout.splitlines())
-    g1 = load_graph_from_deps_lines(deps)
-
-    with cd(tmp_worktree2):
-        result = subprocess.run(["./gradlew", "-q", f":{app_name}:dependencies", "--configuration", configuration],
-                                capture_output=True, text=True)
-    deps = project_dependencies_lines_to_deps(result.stdout.splitlines())
-    g2 = load_graph_from_deps_lines(deps)
+    g1 = gradle_graph_using_worktree(repo, "diff_tmp", commitish1, app, configuration)
+    g2 = gradle_graph_using_worktree(repo, "diff_tmp", commitish2, app, configuration)
 
     g3 = compare_graph(g1, g2)
+    ensure_diff_not_empty(g3)
     output_dot = Path(tempfile.tempdir, "tmp.dot")
     output_png = Path(output) if output else output_dot.with_suffix(".png")
+    os.makedirs(output_png.parent, exist_ok=True)
     Renderer(g3).gen_delta(file=output_dot)
     render_dot_file(output_dot, output_png)
     rprint(f"Created [cyan]{output_png}[/cyan]")
+
+
+def ensure_diff_not_empty(g):
+    if len(g.nodes) == 0:
+        rprint("[yellow]No differences to render")
+        exit(0)
+
+
+def gradle_graph_using_worktree(repo, worktree_name, commitish, app, configuration):
+    tmp_worktree = new_temp_worktree(repo, worktree_name, commitish)
+    with cd(tmp_worktree):
+        rprint("[yellow]Running gradle dependencies...", end="")
+        command = ["./gradlew", "-q", f"{app}:dependencies", "--configuration", configuration]
+        result = subprocess.run(command, capture_output=True, text=True)
+        if result.returncode != 0:
+            fail(
+                f"Command failed ({result.returncode}) in [cyan]{tmp_worktree}[/cyan] [cyan]{' '.join(command)}[reset]\n"
+                f"{result.stderr}"
+            )
+        rprint(f"[green]Complete")
+    deps = project_dependencies_lines_to_deps(result.stdout.splitlines())
+    g1 = load_graph_from_deps_lines(deps)
+    return g1
 
 
 if __name__ == '__main__':

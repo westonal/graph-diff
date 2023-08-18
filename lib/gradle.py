@@ -27,7 +27,7 @@ def project_dependencies_lines_to_deps(lines):
                     stack.pop()
                 top = stack[len(stack) - 1]
                 stack.append(module)
-                output_lines += [f"{top} -> {module}"]
+                output_lines += [f"{top} -> {module}\n"]
     return output_lines
 
 
