@@ -4,7 +4,7 @@ digraph D {
         shape="rectangle";
         fontname="Courier New";
         
-        node2 [shape="rectangle",label=":a"]
+        node2 [fontname="Courier New",shape="rectangle",label=":a"]
     }
     
     subgraph cluster_node3 { /* :gx */
@@ -21,7 +21,7 @@ digraph D {
             color="#ff0000";
             fontcolor="#ff0000";
             
-            node5 [color="#ff0000",fontcolor="#ff0000",shape="rectangle",label=":b"]
+            node5 [color="#ff0000",fontcolor="#ff0000",fontname="Courier New",shape="rectangle",label=":b"]
         }
     }
     
@@ -39,7 +39,7 @@ digraph D {
             color="#158510";
             fontcolor="#158510";
             
-            node8 [color="#158510",fontcolor="#158510",shape="rectangle",label=":b"]
+            node8 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label=":b"]
         }
     }
     

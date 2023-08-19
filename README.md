@@ -61,6 +61,8 @@ On mac you can do:
 brew install graphviz
 ```
 
+For other environments see https://graphviz.org/download/
+
 Create the python virtual environment. On a mac:
 
 ```shell
@@ -69,6 +71,15 @@ source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
+On Windows:
+
+```shell
+python3 -m venv venv
+.\venv\Scripts\activate
+pip3 install -r requirements.txt
+```
+
+
 Running
 ===
 
@@ -76,6 +87,12 @@ Start the python virtual environment if not still running from setup. On a mac:
 
 ```shell
 source venv/bin/activate
+```
+
+On Windows:
+
+```shell
+.\venv\Scripts\activate
 ```
 
 Pass a single file into the diff.

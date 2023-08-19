@@ -1,7 +1,7 @@
 digraph D {
-    node1 [shape="rectangle",label="b"]
+    node1 [fontname="Courier New",shape="rectangle",label="b"]
     
-    node2 [shape="rectangle",label="c"]
+    node2 [fontname="Courier New",shape="rectangle",label="c"]
     
     node1 -> node2 [color="#ff0000",]
 }

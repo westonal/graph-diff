@@ -9,14 +9,14 @@ digraph D {
             shape="rectangle";
             fontname="Courier New";
             
-            node3 [shape="rectangle",label=":a"]
+            node3 [fontname="Courier New",shape="rectangle",label=":a"]
         }
         subgraph cluster_node4 { /* :g2 */
             label=":g2";
             shape="rectangle";
             fontname="Courier New";
             
-            node5 [shape="rectangle",label=":c"]
+            node5 [fontname="Courier New",shape="rectangle",label=":c"]
         }
     }
     
