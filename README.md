@@ -122,6 +122,8 @@ The following command given a copy of the Signal git repository, will diff two c
 It works by creating its own worktree and won't affect the repository otherwise.
 Note that it leaves this worktree behind afterward.
 
+This is not yet working on windows.
+
 ```shell
 python main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o output/signal_diff.png
 ```
