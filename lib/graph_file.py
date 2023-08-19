@@ -17,12 +17,15 @@ def load_graph(input_file: str):
 def load_graph_from_deps_lines(lines):
     graph = nx.DiGraph()
     for line in lines:
-        search = re.search(r"(\S*) -> (\S*)", line)
+        search = re.search(r"^(\S*)(?: -> (\S*))?", line)
         if not search:
             fail("[red]Malformed input [line]")
         u = search.group(1)
         v = search.group(2)
-        graph.add_edge(u, v)
+        if not v:
+            graph.add_node(u)
+        else:
+            graph.add_edge(u, v)
     return graph
 
 

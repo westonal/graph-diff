@@ -1,5 +1,6 @@
 
-This library diffs two directional graphs and outputs the result as a dot file. Primary intended use is to compare changes in software dependencies, for example in gradle projects though it is designed to not be limited to gradle.
+This library compares two directional graphs and outputs the diff result as a dot file.
+Primary intended use is to compare changes in software dependencies, for example in gradle projects though it is designed to not be limited to gradle.
 
 "Deps" Input Format
 ===
@@ -15,6 +16,11 @@ Files of this format have the `.deps` suffix. See the examples folder.
 The set of dependencies in a file is then loaded in to a graph format, this is a [NetworkX DiGraph](https://networkx.org/documentation/stable/reference/classes/digraph.html) under the hood.
 
 With two DiGraphs loaded (or otherwise created) you can compare them to create a diff.
+
+Orphaned nodes can be denoted a single line with just their name on it, e.g.
+```
+a
+```
 
 The Diff
 ===
@@ -149,7 +155,7 @@ This is not yet working on windows.
 python main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o docs/signal_diff.png
 ```
 
-![](docs/signal_diff.png)
+![Signal Diff](docs/signal_diff.png)
 
 This is just one example integration, you can create your own scripts to generate intermediary gradle outputs or `.deps` files and just call the `diff` command with those.
 

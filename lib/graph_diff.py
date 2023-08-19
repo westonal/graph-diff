@@ -34,9 +34,11 @@ def compare_graph(older, newer, parent_function=None):
         visible_nodes.update({u, v})
     new_nodes = newer.nodes - older.nodes
     for new_node in new_nodes:
+        graph.add_node(new_node)
         graph.nodes[new_node]["new"] = True
     old_nodes = older.nodes - newer.nodes
     for old_node in old_nodes:
+        graph.add_node(old_node)
         graph.nodes[old_node]["old"] = True
     if parent_function:
         old_parents = all_parents(older.nodes)

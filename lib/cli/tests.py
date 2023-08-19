@@ -65,6 +65,9 @@ def run_test(file_path, update, indent):
         os.makedirs(file_output_dot.parent, exist_ok=True)
         render_dot_file(file_output_dot, test_output_png)
         if not update:
+            if not os.path.exists(expected_test_output_dot):
+                rprint("[red]Expected output missing")
+                return False
             with open(expected_test_output_dot) as expected:
                 expected_lines = expected.readlines()
             with open(file_output_dot) as actual:

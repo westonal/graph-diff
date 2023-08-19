@@ -1,0 +1,4 @@
+digraph D {
+    node1 [color="#ff0000",fontcolor="#ff0000",fontname="Courier New",shape="rectangle",label="a"]
+    
+}
