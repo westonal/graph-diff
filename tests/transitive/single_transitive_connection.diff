@@ -1,0 +1,10 @@
+> Before
+a -> i
+i -> c
+b
+d
+> After
+a -> i
+i -> c
+a -> b
+c -> d

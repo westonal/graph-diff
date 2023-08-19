@@ -1,0 +1,14 @@
+digraph D {
+    node1 [fontname="Courier New",shape="rectangle",label="a"]
+    
+    node2 [fontname="Courier New",shape="rectangle",label="b"]
+    
+    node3 [fontname="Courier New",shape="rectangle",label="c"]
+    
+    node4 [fontname="Courier New",shape="rectangle",label="d"]
+    
+    node1 -> node2 [color="#158510",]
+    node1 -> node3 [style="dashed",]
+    node1 -> node4 [style="dashed",]
+    node3 -> node4 [color="#158510",]
+}
