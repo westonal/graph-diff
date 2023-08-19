@@ -11,6 +11,18 @@ a -> b
 ```
 This line denotes that `a` depends on `b`.
 
+You can also chain nodes:
+
+```
+a -> b -> c
+```
+This line denotes that `a` depends on `b`, and that `b` depends on `c`.
+And is the same as two entries:
+```
+a -> b
+b -> c
+```
+
 Files of this format have the `.deps` suffix. See the examples folder.
 
 The set of dependencies in a file is then loaded in to a graph format, this is a [NetworkX DiGraph](https://networkx.org/documentation/stable/reference/classes/digraph.html) under the hood.
