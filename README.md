@@ -98,22 +98,43 @@ On Windows:
 Pass a single file into the diff.
 
 ```shell
-python main.py diff examples/dependencies.txt
+python main.py diff examples/revision1.deps -o docs/revision1.png
 ```
+And it will create a png output for the one file:
 
-And it will create a png output.
+![Revision 1](docs/revision1.png)
 
-Pass two deps files, and it will diff them:
+Running again for revision2:
 
 ```shell
-python main.py diff examples/revision1.deps examples/revision2.deps
+python main.py diff examples/revision2.deps -o docs/revision2.png
 ```
+
+![Revision 1](docs/revision2.png)
+
+If you look carefully, you will be able to make out the changes, but if we pass the two deps files, it will output the diff them:
+
+```shell
+python main.py diff examples/revision1.deps examples/revision2.deps -o docs/compare_two_dep_files.png
+```
+
+Now we can clearly see just the changes:
+
+![Compare two dep files](docs/compare_two_dep_files.png)
+
+- `:lib-b` was removed altogether and the link from `:app` was therefore also removed (in red).
+- A new link from `:lib-e` to `:lib-f` was created (in green).
+- Transitive links are shown between `:app` and `:lib-e` because they are still connected by another part of the full
+graph, `:lib-d` which is not shown as it has not changed.
+
 
 You can also pass in the output of the gradle dependencies query:
 
 ```shell
-python main.py diff examples/dependencies.txt examples/dependencies2.txt
+python main.py diff examples/dependencies.txt examples/dependencies2.txt -o docs/compare_two_gradle_outputs.png
 ```
+
+![Compare two gradle outputs](docs/compare_two_gradle_outputs.png)
 
 git_gradle_diff
 ===
@@ -125,10 +146,26 @@ Note that it leaves this worktree behind afterward.
 This is not yet working on windows.
 
 ```shell
-python main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o output/signal_diff.png
+python main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o docs/signal_diff.png
 ```
 
+![](docs/signal_diff.png)
+
 This is just one example integration, you can create your own scripts to generate intermediary gradle outputs or `.deps` files and just call the `diff` command with those.
+
+Testing
+===
+
+The library has its own test runner which discovers and runs test files under the `test/` path.
+
+You can run them like so:
+
+```shell
+python main.py tests
+```
+
+The dot file output is committed to this repo as the expected result.
+If the output changes expectedly, you can run `python main.py tests -u` to update the output.
 
 Requirements
 ===

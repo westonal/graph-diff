@@ -73,7 +73,7 @@ def run_test(file_path, update, indent):
                 rprint("[red]Output not as expected")
                 return False
             else:
-                rprint("[green]Correct")
+                rprint("[green]pass")
                 return True
         else:
             rprint("[green]Done")
