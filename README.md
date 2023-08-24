@@ -2,6 +2,11 @@
 This library compares two directional graphs and outputs the diff result as a dot file.
 Primary intended use is to compare changes in software dependencies, for example in gradle projects though it is designed to not be limited to gradle.
 
+Github action
+===
+
+This repo contains an action that can be used to generate diagrams of local project dependency changes on pull requests, please see example_workflow/test_action.yml
+
 "Deps" Input Format
 ===
 
@@ -63,7 +68,7 @@ An example of generating this input is:
 
 ```shell
 cd sample
-gradle -q :app:dependencies --configuration runtimeClasspath > ../examples/dependencies.txt
+./gradlew -q :app:dependencies --configuration runtimeClasspath > ../examples/dependencies.txt
 ```
 
 For your own project you may need to edit the command for your main app name (`:app`) and configuration name (`runtimeClasspath`) to match your project. Also see `git_gradle_diff` section below for an end-to-end example.
