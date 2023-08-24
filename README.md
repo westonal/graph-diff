@@ -5,7 +5,7 @@ Primary intended use is to compare changes in software dependencies, for example
 Github action
 ===
 
-This repo contains an action that can be used to generate diagrams of local project dependency changes on pull requests, please see .github/workflows/test_action.yml
+This repo contains an action that can be used to generate diagrams of local project dependency changes on pull requests, please see example_workflow/test_action.yml
 
 "Deps" Input Format
 ===
