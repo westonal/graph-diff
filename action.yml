@@ -51,25 +51,27 @@ runs:
 
         cd "$INPUT_BUILD_ROOT_DIR"
 
-        ./gradlew $ADDITIONAL_GRADLE_ARGUMENTS -q "$INPUT_PROJECT":dependencies --configuration "$INPUT_CONFIGURATION" > "$ORIGINAL/new_diff.txt"
+        ./gradlew $ADDITIONAL_GRADLE_ARGUMENTS -q "$INPUT_PROJECT":dependencies --configuration "$INPUT_CONFIGURATION" > "$ACTION_PATH/new_diff.txt"
         git fetch --force origin "$INPUT_BASEREF":"$INPUT_BASEREF" --no-tags
         git switch --force "$INPUT_BASEREF"
-        ./gradlew $ADDITIONAL_GRADLE_ARGUMENTS -q "$INPUT_PROJECT":dependencies --configuration "$INPUT_CONFIGURATION" > "$ORIGINAL/old_diff.txt"
+        ./gradlew $ADDITIONAL_GRADLE_ARGUMENTS -q "$INPUT_PROJECT":dependencies --configuration "$INPUT_CONFIGURATION" > "$ACTION_PATH/old_diff.txt"
         
         # Restore the original checkout
         git fetch --force origin "$INPUT_MERGEREF":"$INPUT_MERGEREF" --no-tags
         git switch --force "$INPUT_MERGEREF"
 
-        cd -
+        cd $ACTION_PATH
 
         python main.py diff old_diff.txt new_diff.txt -o diff.png
         
         if [[ -f "diff.png" ]]; then
           echo "File exists, there was a diff"
-          echo "diff-image-file=diff.png" >> $GITHUB_OUTPUT
+          echo "diff-image-file=$ACTION_PATH/diff.png" >> $GITHUB_OUTPUT
         else
           echo "File does not exist, there was no diff"
         fi
+        
+        cd $ORIGINAL
     - uses: actions/upload-artifact@v3
       id: upload
       with:
