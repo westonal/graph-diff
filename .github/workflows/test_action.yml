@@ -1,0 +1,55 @@
+# Warning! Before copying this, understand where it's uploading the image to and make sure that's right for you.
+# this example uses a free and open image bucket api but obviously THERE'S NO PRIVACY, consider setting up an S3 bucket or something
+
+name: Test Action
+on: [pull_request]
+
+jobs:
+  diff-it:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    name: Gradle dependency diff diagram
+    steps:
+      - name: Comment PR with execution number
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Running a local gradle projects dependency diff of merge ${{ github.sha }}
+            _(execution **${{ github.run_id }}** / attempt **${{ github.run_attempt }}**)_
+          comment_tag: diff_comment
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Dependency diff
+        id: dependency-diff-generator
+        uses: ./ # Uses action in the root directory, if copying this be sure to use the published version
+        with:
+          build-root-directory: sample
+          configuration: runtimeClasspath
+      # Warning! There's no way I know of hosting the image on github, this example uses a free and open api but obviously THERE'S NO PRIVACY, consider setting up an S3 bucket or something
+      - name: Upload the image to freeimage.host
+        if: steps.dependency-diff-generator.outputs.diff-image-file != null
+        id: upload_image
+        run: |
+          json_response=$(curl https://freeimage.host/api/1/upload -d "key=6d207e02198a847aa98d0a2a901485a5" --data-urlencode "source=$(base64 ${{ steps.dependency-diff-generator.outputs.diff-image-file }} -w0)")
+          echo $json_response
+          # extract url from json
+          url=$(echo $json_response | jq -r '.image.url')
+          echo $url
+          echo "URL=$url" >> $GITHUB_OUTPUT
+      - name: Comment on PR with diff image
+        if: steps.dependency-diff-generator.outputs.diff-image-file != null
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Local gradle projects dependency diff in merge ${{ github.sha }}
+            ![Diff](${{ steps.upload_image.outputs.URL }})
+          comment_tag: diff_comment
+      - name: Comment on PR with no diff
+        if: steps.dependency-diff-generator.outputs.diff-image-file == null
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            No local gradle projects dependency changes in merge ${{ github.sha }}
+          comment_tag: diff_comment
