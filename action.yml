@@ -1,4 +1,4 @@
-name: 'Dependency diff for Gradle'
+name: 'Local project dependency diff diagram for Gradle'
 description: "Generates a dependency diff diagram between 2 commits"
 inputs:
   configuration:
