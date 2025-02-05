@@ -1,4 +1,4 @@
 /output
 /venv
 /.idea
-lib/
+__pycache__/
