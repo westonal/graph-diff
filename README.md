@@ -76,6 +76,8 @@ For your own project you may need to edit the command for your main app name (`:
 Setup
 ===
 
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/).
+
 Install `dot` if not present, this is used to create the images from the `.dot` file.
 
 On mac you can do:
@@ -86,42 +88,13 @@ brew install graphviz
 
 For other environments see https://graphviz.org/download/
 
-Create the python virtual environment. On a mac:
-
-```shell
-python3 -m venv venv
-source venv/bin/activate
-pip3 install -r requirements.txt
-```
-
-On Windows:
-
-```shell
-python3 -m venv venv
-.\venv\Scripts\activate
-pip3 install -r requirements.txt
-```
-
-
 Running
 ===
-
-Start the python virtual environment if not still running from setup. On a mac:
-
-```shell
-source venv/bin/activate
-```
-
-On Windows:
-
-```shell
-.\venv\Scripts\activate
-```
 
 Pass a single file into the diff.
 
 ```shell
-python main.py diff examples/revision1.deps -o docs/revision1.png
+uv run main.py diff examples/revision1.deps -o docs/revision1.png
 ```
 And it will create a png output for the one file:
 
@@ -130,7 +103,7 @@ And it will create a png output for the one file:
 Running again for revision2:
 
 ```shell
-python main.py diff examples/revision2.deps -o docs/revision2.png
+uv run main.py diff examples/revision2.deps -o docs/revision2.png
 ```
 
 ![Revision 1](docs/revision2.png)
@@ -138,7 +111,7 @@ python main.py diff examples/revision2.deps -o docs/revision2.png
 If you look carefully, you will be able to make out the changes, but if we pass the two deps files, it will output the diff them:
 
 ```shell
-python main.py diff examples/revision1.deps examples/revision2.deps -o docs/compare_two_dep_files.png
+uv run main.py diff examples/revision1.deps examples/revision2.deps -o docs/compare_two_dep_files.png
 ```
 
 Now we can clearly see just the changes:
@@ -154,7 +127,7 @@ graph, `:lib-d` which is not shown as it has not changed.
 You can also pass in the output of the gradle dependencies query:
 
 ```shell
-python main.py diff examples/dependencies.txt examples/dependencies2.txt -o docs/compare_two_gradle_outputs.png
+uv run main.py diff examples/dependencies.txt examples/dependencies2.txt -o docs/compare_two_gradle_outputs.png
 ```
 
 ![Compare two gradle outputs](docs/compare_two_gradle_outputs.png)
@@ -169,7 +142,7 @@ Note that it leaves this worktree behind afterward.
 This is not yet working on windows.
 
 ```shell
-python main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o docs/signal_diff.png
+uv run main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o docs/signal_diff.png
 ```
 
 ![Signal Diff](docs/signal_diff.png)
@@ -184,7 +157,7 @@ The library has its own test runner which discovers and runs test files under th
 You can run them like so:
 
 ```shell
-python main.py tests
+uv run main.py tests
 ```
 
 The dot file output is committed to this repo as the expected result.
