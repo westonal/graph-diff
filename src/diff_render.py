@@ -3,7 +3,7 @@ from pathlib import Path
 
 import networkx as nx
 
-from lib.dot_file import Dot
+from src.dot_file import Dot
 
 
 class Renderer(object):

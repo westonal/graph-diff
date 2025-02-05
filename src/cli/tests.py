@@ -5,13 +5,13 @@ from pathlib import Path
 import click
 from rich import print as rprint
 
-from lib.cli.commands import commands
-from lib.diff_render import Renderer
-from lib.dot import render_dot_file
-from lib.error import fail
-from lib.gradle import gradle_split
-from lib.graph_diff import compare_graph
-from lib.graph_file import load_graph_from_deps_lines
+from src.cli.commands import commands
+from src.diff_render import Renderer
+from src.dot import render_dot_file
+from src.error import fail
+from src.gradle import gradle_split
+from src.graph_diff import compare_graph
+from src.graph_file import load_graph_from_deps_lines
 
 
 @commands.command(name="tests", help="Run dot file generation tests")
