@@ -58,6 +58,7 @@ def run_test(file_path, update, indent):
         after = load_graph_from_deps_lines(lines[after + 1:])
         compared = compare_graph(before, after, parent_function=gradle_split)
         test_output_png = Path(os.path.join("output", file_path)).with_suffix(".png")
+        test_output_png.parent.mkdir(parents=True, exist_ok=True)
         expected_test_output_dot = Path(os.path.join("test_output", file_path)).with_suffix(".dot")
         file_output_dot = expected_test_output_dot if update else Path(
             os.path.join(tempfile.gettempdir(), file_path)).with_suffix(".dot")
