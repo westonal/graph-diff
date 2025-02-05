@@ -1,6 +1,7 @@
+import subprocess
+
 from lib.cmd import is_tool
 from lib.error import fail
-import subprocess
 
 
 def render_dot_file(input_dot_path, output_png_path):

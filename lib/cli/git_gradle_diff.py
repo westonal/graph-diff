@@ -8,11 +8,10 @@ from git import Repo
 from rich import print as rprint
 
 from lib.cd import cd
-from lib.cmd import is_tool
-from lib.error import fail
 from lib.cli.commands import commands
 from lib.diff_render import Renderer
 from lib.dot import render_dot_file
+from lib.error import fail
 from lib.git_utils import new_temp_worktree
 from lib.gradle import project_dependencies_lines_to_deps
 from lib.graph_diff import compare_graph

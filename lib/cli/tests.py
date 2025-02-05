@@ -1,8 +1,10 @@
-from pathlib import Path
 import os
 import tempfile
+from pathlib import Path
+
 import click
 from rich import print as rprint
+
 from lib.cli.commands import commands
 from lib.diff_render import Renderer
 from lib.dot import render_dot_file

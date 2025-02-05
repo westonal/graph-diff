@@ -1,8 +1,8 @@
 import re
 from pathlib import Path
-from rich import print as rprint
 
 import networkx as nx
+from rich import print as rprint
 
 from lib.error import fail
 from lib.gradle import project_dependencies_to_deps
