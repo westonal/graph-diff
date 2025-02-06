@@ -24,7 +24,7 @@ wheels = [
 
 [[package]]
 name = "diff-dot"
-version = "2025.2.5.5"
+version = "2025.2.5.6"
 source = { editable = "." }
 dependencies = [
     { name = "click" },
