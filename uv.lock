@@ -23,6 +23,25 @@ wheels = [
 ]
 
 [[package]]
+name = "diff-dot"
+version = "2025.2.5.5"
+source = { editable = "." }
+dependencies = [
+    { name = "click" },
+    { name = "gitpython" },
+    { name = "networkx" },
+    { name = "rich" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "click", specifier = "==8.1.3" },
+    { name = "gitpython", specifier = "==3.1.32" },
+    { name = "networkx", specifier = "==3.1" },
+    { name = "rich", specifier = "==13.5.2" },
+]
+
+[[package]]
 name = "gitdb"
 version = "4.0.12"
 source = { registry = "https://pypi.org/simple" }
@@ -44,25 +63,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/87/56/6dcdfde2f3a747988d1693100224fb88fc1d3bbcb3f18377b2a3ef53a70a/GitPython-3.1.32.tar.gz", hash = "sha256:8d9b8cb1e80b9735e8717c9362079d3ce4c6e5ddeebedd0361b228c3a67a62f6", size = 196978 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/67/50/742c2fb60989b76ccf7302c7b1d9e26505d7054c24f08cc7ec187faaaea7/GitPython-3.1.32-py3-none-any.whl", hash = "sha256:e3d59b1c2c6ebb9dfa7a184daf3b6dd4914237e7488a1730a6d8f6f5d0b4187f", size = 188487 },
-]
-
-[[package]]
-name = "graph-diff"
-version = "0.1.0"
-source = { virtual = "." }
-dependencies = [
-    { name = "click" },
-    { name = "gitpython" },
-    { name = "networkx" },
-    { name = "rich" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "click", specifier = "==8.1.3" },
-    { name = "gitpython", specifier = "==3.1.32" },
-    { name = "networkx", specifier = "==3.1" },
-    { name = "rich", specifier = "==13.5.2" },
 ]
 
 [[package]]

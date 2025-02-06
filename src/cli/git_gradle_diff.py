@@ -7,15 +7,15 @@ import click
 from git import Repo
 from rich import print as rprint
 
-from src.cd import cd
-from src.cli.commands import commands
-from src.diff_render import Renderer
-from src.dot import render_dot_file
-from src.error import fail
-from src.git_utils import new_temp_worktree
-from src.gradle import project_dependencies_lines_to_deps
-from src.graph_diff import compare_graph
-from src.graph_file import load_graph_from_deps_lines, ensure_diff_not_empty
+from ..cd import cd
+from ..cli.commands import commands
+from ..diff_render import Renderer
+from ..dot import render_dot_file
+from ..error import fail
+from ..git_utils import new_temp_worktree
+from ..gradle import project_dependencies_lines_to_deps
+from ..graph_diff import compare_graph
+from ..graph_file import load_graph_from_deps_lines, ensure_diff_not_empty
 
 
 @commands.command(name="git_gradle_diff", help="Diff dependencies across two commits in a gradle repo")

@@ -5,12 +5,12 @@ import click
 import networkx as nx
 from rich import print as rprint
 
-from src.cli.commands import commands
-from src.diff_render import Renderer
-from src.dot import render_dot_file
-from src.gradle import gradle_split
-from src.graph_diff import compare_graph
-from src.graph_file import load_graph_from_argument, ensure_diff_not_empty
+from .commands import commands
+from ..diff_render import Renderer
+from ..dot import render_dot_file
+from ..gradle import gradle_split
+from ..graph_diff import compare_graph
+from ..graph_file import load_graph_from_argument, ensure_diff_not_empty
 
 
 @commands.command(name="diff", help="Diff two deps files or gradle -q dependencies outputs")

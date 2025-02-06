@@ -4,8 +4,8 @@ from pathlib import Path
 import networkx as nx
 from rich import print as rprint
 
-from src.error import fail
-from src.gradle import project_dependencies_to_deps
+from .error import fail
+from .gradle import project_dependencies_to_deps
 
 
 def load_graph(input_file: str):
