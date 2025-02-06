@@ -1,6 +1,6 @@
 [project]
 name = "diff-dot"
-version = "2025.2.5"
+version = "2025.2.5.1"
 description = "Compare Directional Graphs"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -10,3 +10,10 @@ dependencies = [
     "networkx==3.1",
     "rich==13.5.2",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/gradle.py"]
