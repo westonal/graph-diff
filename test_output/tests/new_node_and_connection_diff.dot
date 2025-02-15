@@ -8,5 +8,5 @@ digraph D {
     
     node2 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label="c"]
     
-    node1 -> node2 [color="#158510",]
+    node1 -> node2 [arrowhead="empty",color="#158510",]
 }

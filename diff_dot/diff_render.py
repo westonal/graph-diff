@@ -87,7 +87,8 @@ class Renderer(object):
         dot.style_default_append("fontname", self.style.font_name)
         dot.node_style_default_append("shape", "rectangle")
         dot.node_style_default_append("fontname", self.style.font_name)
-        dot.subgraph_style_default_append("shape", "rectangle")
+        dot.subgraph_style_default_append("style", "rounded")
+        dot.subgraph_style_default_append("color", self.style.fg_color)
         dot.subgraph_style_default_append("fontname", self.style.font_name)
         new_nodes = self.graph_delta.nodes(data="new", default=False)
         old_nodes = self.graph_delta.nodes(data="old", default=False)
@@ -118,6 +119,7 @@ class Renderer(object):
             else:
                 color = self.style.fg_color
             dot.property_append(link, "color", color)
+            dot.property_append(link, "arrowhead", "empty")
             if data.get("indirect"):
                 dot.property_append(link, "style", "dashed")
         return dot

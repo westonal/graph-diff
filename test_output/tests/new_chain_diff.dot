@@ -14,9 +14,9 @@ digraph D {
     
     node5 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="e"]
     
-    node1 -> node2 [color="#158510",]
-    node1 -> node5 [color="#ff0000",]
-    node2 -> node3 [color="#158510",]
-    node3 -> node4 [color="#158510",]
-    node4 -> node5 [color="#158510",]
+    node1 -> node2 [arrowhead="empty",color="#158510",]
+    node1 -> node5 [arrowhead="empty",color="#ff0000",]
+    node2 -> node3 [arrowhead="empty",color="#158510",]
+    node3 -> node4 [arrowhead="empty",color="#158510",]
+    node4 -> node5 [arrowhead="empty",color="#158510",]
 }
