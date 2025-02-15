@@ -1,12 +1,15 @@
 digraph D {
     label="group change inside unchanging group diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
     
     subgraph cluster_node1 { /* :g1 */
         label=":g1";
         shape="rectangle";
         fontname="Courier New";
         
-        node2 [fontname="Courier New",shape="rectangle",label=":a"]
+        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":a"]
     }
     
     subgraph cluster_node3 { /* :gx */

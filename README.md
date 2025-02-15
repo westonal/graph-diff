@@ -94,7 +94,7 @@ Running
 Pass a single file into the diff.
 
 ```shell
-uv run main.py diff examples/revision1.deps -o docs/revision1.png
+uv run main.py diff examples/revision1.deps --dark-mode --caption "Revision 1" -o docs/revision1.png
 ```
 And it will create a png output for the one file:
 
@@ -103,7 +103,7 @@ And it will create a png output for the one file:
 Running again for revision2:
 
 ```shell
-uv run main.py diff examples/revision2.deps -o docs/revision2.png
+uv run main.py diff examples/revision2.deps --dark-mode --caption "Revision 2" -o docs/revision2.png
 ```
 
 ![Revision 1](docs/revision2.png)
@@ -111,7 +111,7 @@ uv run main.py diff examples/revision2.deps -o docs/revision2.png
 If you look carefully, you will be able to make out the changes, but if we pass the two deps files, it will output the diff them:
 
 ```shell
-uv run main.py diff examples/revision1.deps examples/revision2.deps -o docs/compare_two_dep_files.png
+uv run main.py diff examples/revision1.deps examples/revision2.deps --dark-mode --caption "Diff of Revision 1 & 2" -o docs/compare_two_dep_files.png
 ```
 
 Now we can clearly see just the changes:
@@ -127,7 +127,7 @@ graph, `:lib-d` which is not shown as it has not changed.
 You can also pass in the output of the gradle dependencies query:
 
 ```shell
-uv run main.py diff examples/dependencies.txt examples/dependencies2.txt -o docs/compare_two_gradle_outputs.png
+uv run main.py diff examples/dependencies.txt examples/dependencies2.txt --dark-mode --caption "Diff of dependency files" -o docs/compare_two_gradle_outputs.png 
 ```
 
 ![Compare two gradle outputs](docs/compare_two_gradle_outputs.png)
@@ -142,7 +142,7 @@ Note that it leaves this worktree behind afterward.
 This is not yet working on windows.
 
 ```shell
-uv run main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath -o docs/signal_diff.png
+uv run main.py git_gradle_diff ~/workspace/Signal-Android 1fc119e027d 4bbed2601cf -a :Signal-Android -c playProdReleaseRuntimeClasspath --dark-mode --caption "Signal {old} vs {new}" -o docs/signal_diff.png
 ```
 
 ![Signal Diff](docs/signal_diff.png)

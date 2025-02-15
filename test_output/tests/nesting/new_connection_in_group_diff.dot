@@ -1,13 +1,16 @@
 digraph D {
     label="new connection in group diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
     
     subgraph cluster_node1 { /* :g1 */
         label=":g1";
         shape="rectangle";
         fontname="Courier New";
         
-        node2 [fontname="Courier New",shape="rectangle",label=":a"]
-        node3 [fontname="Courier New",shape="rectangle",label=":c"]
+        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":a"]
+        node3 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":c"]
     }
     
     node2 -> node3 [color="#158510",]

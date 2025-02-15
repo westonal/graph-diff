@@ -7,7 +7,7 @@ from rich import print as rprint
 
 
 def create_worktree(repo: Repo, path, commitish):
-    repo.git.execute(["git", "worktree", "add", "--detach", path, commitish])
+    repo.git.execute(["git", "worktree", "add", "-f", "--detach", path, commitish])
 
 
 def new_temp_worktree(repo: Repo, worktree_name, commitish):
@@ -17,7 +17,7 @@ def new_temp_worktree(repo: Repo, worktree_name, commitish):
         worktree = Repo(tmp_worktree)
         worktree.head.reset(commit=hexsha, working_tree=True)
         rprint(
-            f"[yellow]Reset [cyan]{worktree_name}[/cyan] to [cyan]{commitish}[/cyan] ([cyan]{hexsha[0:11]}[/cyan])"
+            f"[yellow]Reset worktree [cyan]{worktree_name}[/cyan] to [cyan]{commitish}[/cyan] ([cyan]{hexsha[0:11]}[/cyan])"
         )
     else:
         rprint(

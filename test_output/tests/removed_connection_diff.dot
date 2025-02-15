@@ -1,9 +1,12 @@
 digraph D {
     label="removed connection diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
     
-    node1 [fontname="Courier New",shape="rectangle",label="b"]
+    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="b"]
     
-    node2 [fontname="Courier New",shape="rectangle",label="c"]
+    node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="c"]
     
     node1 -> node2 [color="#ff0000",]
 }

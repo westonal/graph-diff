@@ -1,9 +1,12 @@
 digraph D {
     label="connection made transitive diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
     
-    node1 [fontname="Courier New",shape="rectangle",label="a"]
+    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="a"]
     
-    node2 [fontname="Courier New",shape="rectangle",label="c"]
+    node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="c"]
     
     node1 -> node2 [color="#ff0000",style="dashed",]
 }

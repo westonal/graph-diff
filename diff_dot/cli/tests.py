@@ -52,7 +52,7 @@ def run_test(file_path: Path, update, indent):
     for i in range(indent):
         rprint("  ", end="")
     rprint(f"[yellow][bold]{action} test [cyan]{file_path}[/cyan]...", end="")
-    with open(file_path) as file:
+    with (open(file_path) as file):
         lines = file.readlines()
         if lines[0] != "> Before\n":
             fail('First line must be "> Before"')
@@ -66,7 +66,10 @@ def run_test(file_path: Path, update, indent):
         file_output_dot = expected_test_output_dot if update else Path(
             os.path.join(tempfile.gettempdir(), file_path)
         ).with_suffix(".dot")
-        Renderer(compared, title=file_path.stem.replace("_", " ")).gen_delta_dot_file(file=file_output_dot)
+        Renderer(compared,
+                 caption=file_path.stem.replace("_", " "),
+                 dark_mode=False,
+                 ).gen_delta_dot_file(file=file_output_dot)
         os.makedirs(file_output_dot.parent, exist_ok=True)
         render_dot_file(file_output_dot, test_output_png)
         if not update:

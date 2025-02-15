@@ -24,9 +24,20 @@ from ..graph_file import load_graph_from_deps_lines, ensure_diff_not_empty
 @click.argument("commitish2")
 @click.option("--app", "-a", default=":app")
 @click.option("--configuration", "-c", default="releaseRuntimeClasspath")
+@click.option("--caption", "-t", default="", help="Caption underneath diagram")
 @click.option("--output", "-o", default=None)
-def cmd_gradle_diff(repo, commitish1, commitish2, app, configuration, output):
+@click.option("--dark-mode", "-d", is_flag=True, default=False)
+def cmd_gradle_diff(repo: str,
+                    commitish1: str, commitish2: str,
+                    app: str, configuration: str,
+                    caption: str,
+                    output: str,
+                    dark_mode: bool,
+                    ):
     repo = Repo(repo)
+
+    if caption:
+        caption = caption.replace("{old}", commitish1).replace("{new}", commitish2)
 
     g1 = gradle_graph_using_worktree(repo, "diff_tmp", commitish1, app, configuration)
     g2 = gradle_graph_using_worktree(repo, "diff_tmp", commitish2, app, configuration)
@@ -36,7 +47,7 @@ def cmd_gradle_diff(repo, commitish1, commitish2, app, configuration, output):
     output_dot = Path(tempfile.tempdir, "tmp.dot")
     output_png = Path(output) if output else output_dot.with_suffix(".png")
     os.makedirs(output_png.parent, exist_ok=True)
-    Renderer(g3).gen_delta_dot_file(file=output_dot)
+    Renderer(g3, dark_mode=dark_mode, caption=caption).gen_delta_dot_file(file=output_dot)
     render_dot_file(output_dot, output_png)
     rprint(f"Created [cyan]{output_png}[/cyan]")
 
@@ -54,5 +65,4 @@ def gradle_graph_using_worktree(repo, worktree_name, commitish, app, configurati
             )
         rprint(f"[green]Complete")
     deps = project_dependencies_lines_to_deps(result.stdout.splitlines())
-    g1 = load_graph_from_deps_lines(deps)
-    return g1
+    return load_graph_from_deps_lines(deps)
