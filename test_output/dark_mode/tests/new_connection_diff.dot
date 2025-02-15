@@ -1,0 +1,12 @@
+digraph D {
+    label="new connection diff";
+    bgcolor="#222222";
+    fontcolor="#ffffff";
+    fontname="Courier New";
+    
+    node1 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="a"]
+    
+    node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="c"]
+    
+    node1 -> node2 [arrowhead="empty",color="#15ef10",]
+}

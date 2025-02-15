@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -15,15 +16,19 @@ class DotStyle:
     bg_color: str = "#ffffff"
     fg_color: str = "#000000"
     font_name: str = "Courier New"
+    group_border_color: Optional[str] = None
+    """fg_color if not overridden"""
+    group_title_color: Optional[str] = None
+    """fg_color if not overridden"""
 
     def no_color(self):
-        return DotStyle(
+        return self.copy(
             new_color=self.fg_color,
             old_color=self.fg_color,
-            bg_color=self.bg_color,
-            fg_color=self.fg_color,
-            font_name=self.font_name,
         )
+
+    def copy(self, /, **changes):
+        return dataclasses.replace(self, **changes)
 
 
 light_mode_style = DotStyle()
@@ -32,6 +37,8 @@ dark_mode_style = DotStyle(
     old_color="#ef3f3f",
     bg_color="#222222",
     fg_color="#ffffff",
+    group_border_color="#7f7f7f",
+    group_title_color="#bfbfbf",
 )
 
 
@@ -65,9 +72,10 @@ class Renderer(object):
                     color = self.style.new_color
                 elif state == "older":
                     color = self.style.old_color
-                if color:
-                    dot.property_append(parent_node, "color", color)
-                    dot.property_append(parent_node, "fontcolor", color)
+                else:
+                    color = self.style.group_title_color or self.style.fg_color
+                dot.property_append(parent_node, "color", color or self.style.group_border_color)
+                dot.property_append(parent_node, "fontcolor", color or self.style.group_title_color)
                 self.nodes[key] = parent_node
             else:
                 grand_parent = self._find_parent(dot, parents_with_state[0:-1])
@@ -88,7 +96,6 @@ class Renderer(object):
         dot.node_style_default_append("shape", "rectangle")
         dot.node_style_default_append("fontname", self.style.font_name)
         dot.subgraph_style_default_append("style", "rounded")
-        dot.subgraph_style_default_append("color", self.style.fg_color)
         dot.subgraph_style_default_append("fontname", self.style.font_name)
         new_nodes = self.graph_delta.nodes(data="new", default=False)
         old_nodes = self.graph_delta.nodes(data="old", default=False)

@@ -1,0 +1,22 @@
+digraph D {
+    label="new chain diff";
+    bgcolor="#222222";
+    fontcolor="#ffffff";
+    fontname="Courier New";
+    
+    node1 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="a"]
+    
+    node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="b"]
+    
+    node3 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="c"]
+    
+    node4 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",label="d"]
+    
+    node5 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="e"]
+    
+    node1 -> node2 [arrowhead="empty",color="#15ef10",]
+    node1 -> node5 [arrowhead="empty",color="#ef3f3f",]
+    node2 -> node3 [arrowhead="empty",color="#15ef10",]
+    node3 -> node4 [arrowhead="empty",color="#15ef10",]
+    node4 -> node5 [arrowhead="empty",color="#15ef10",]
+}
