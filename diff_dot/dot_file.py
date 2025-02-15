@@ -1,4 +1,8 @@
 """Dot file generation"""
+import os
+from io import TextIOWrapper
+from os import PathLike
+from pathlib import Path
 
 
 class Props(object):
@@ -50,11 +54,14 @@ class Node(object):
 
 class Dot(object):
 
-    def __init__(self):
+    def __init__(self, title: str = ""):
         self._nodes = {}
         self._links = []
+        self._root_props = Props()
         self._node_default_style = Props()
         self._subgraph_default_style = Props()
+        if title:
+            self.style_default_append("label", title)
 
     def new_item(self, label, parent=None, node_name=None):
         node_name = node_name or self._auto_node_name()
@@ -77,10 +84,22 @@ class Dot(object):
     def subgraph_style_default_append(self, param_key, param_value):
         self._subgraph_default_style[param_key] = param_value
 
-    def dot(self, file):
+    def style_default_append(self, param_key, param_value):
+        self._root_props[param_key] = param_value
+
+    def write_dot_file(self, file: [TextIOWrapper | PathLike | str], make_dirs: bool = True):
+        if not isinstance(file, TextIOWrapper):
+            if make_dirs:
+                os.makedirs(Path(file).parent, exist_ok=True)
+            with open(file, "w") as fileIO:
+                self.write_dot_file(fileIO)
+            return
+
         writer = IndentedWriter(file)
         writer.write_line("digraph D {")
         with writer.indent():
+            if writer.write_props(self._root_props):
+                writer.write_line()
             for node in sorted(filter(lambda p: not p.parent, self._nodes.values()), key=lambda n: n.name):
                 self.write_node(writer, node)
                 writer.write_line()
@@ -94,9 +113,8 @@ class Dot(object):
             writer.write_line(f'subgraph cluster_{node.name} {{ /* {node.label} */')
             with writer.indent():
                 writer.write_line(f'label="{node.label}";')
-                props = self._subgraph_default_style.override(node.props).props
-                for prop in props:
-                    writer.write_line(f'{prop}="{props[prop]}";')
+                props = self._subgraph_default_style.override(node.props)
+                writer.write_props(props)
                 writer.write_line()
                 for child in node.children:
                     self.write_node(writer, child)
@@ -132,6 +150,12 @@ class IndentedWriter(object):
 
     def indent(self):
         return Indenter(self)
+
+    def write_props(self, props: Props) -> bool:
+        props = props.props
+        for prop in props:
+            self.write_line(f'{prop}="{props[prop]}";')
+        return True if props else False
 
 
 class Indenter(object):

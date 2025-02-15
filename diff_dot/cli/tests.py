@@ -46,7 +46,8 @@ def run_tests(path, update, indent=0):
     return passed_count, failed_count
 
 
-def run_test(file_path, update, indent):
+def run_test(file_path: Path, update, indent):
+    file_path = Path(file_path)
     action = "Running" if not update else "Updating"
     for i in range(indent):
         rprint("  ", end="")
@@ -63,8 +64,9 @@ def run_test(file_path, update, indent):
         test_output_png.parent.mkdir(parents=True, exist_ok=True)
         expected_test_output_dot = Path(os.path.join("test_output", file_path)).with_suffix(".dot")
         file_output_dot = expected_test_output_dot if update else Path(
-            os.path.join(tempfile.gettempdir(), file_path)).with_suffix(".dot")
-        Renderer(compared).gen_delta(file=file_output_dot)
+            os.path.join(tempfile.gettempdir(), file_path)
+        ).with_suffix(".dot")
+        Renderer(compared, title=file_path.stem.replace("_", " ")).gen_delta_dot_file(file=file_output_dot)
         os.makedirs(file_output_dot.parent, exist_ok=True)
         render_dot_file(file_output_dot, test_output_png)
         if not update:

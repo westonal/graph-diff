@@ -1,4 +1,6 @@
 digraph D {
+    label="new orphaned node diff";
+    
     node1 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label="a"]
     
 }

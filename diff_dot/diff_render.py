@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass
 from functools import cached_property
 from pathlib import Path
@@ -16,10 +15,16 @@ class DotStyle:
 
 class Renderer(object):
 
-    def __init__(self, graph_delta: nx.Graph, style: DotStyle = None):
+    def __init__(self,
+                 graph_delta: nx.Graph,
+                 style: DotStyle = None,
+                 *,
+                 title: str = "",
+                 ):
         self.graph_delta = graph_delta
         self.style = style or DotStyle()
         self.nodes = {}
+        self.title = title
 
     def _find_parent(self, dot: Dot, parents_with_state, parent=None):
         key = tuple(map(lambda p: p[0], parents_with_state))
@@ -43,15 +48,13 @@ class Renderer(object):
                 self.nodes[key] = parent_node
         return parent_node
 
-    def gen_delta(self, file=Path("output/graph.dot")):
+    def gen_delta_dot_file(self, file=Path("output/graph.dot")):
         dot = self.dot
-        os.makedirs(Path(file).parent, exist_ok=True)
-        with open(file, "w") as file:
-            dot.dot(file)
+        dot.write_dot_file(file)
 
     @cached_property
     def dot(self) -> Dot:
-        dot = Dot()
+        dot = Dot(self.title)
         dot.node_style_default_append("shape", "rectangle")
         dot.node_style_default_append("fontname", "Courier New")
         dot.subgraph_style_default_append("shape", "rectangle")

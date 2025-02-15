@@ -1,4 +1,6 @@
 digraph D {
+    label="single transitive connection diff";
+    
     node1 [fontname="Courier New",shape="rectangle",label="a"]
     
     node2 [fontname="Courier New",shape="rectangle",label="b"]

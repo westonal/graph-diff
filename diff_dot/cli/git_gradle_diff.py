@@ -36,7 +36,7 @@ def cmd_gradle_diff(repo, commitish1, commitish2, app, configuration, output):
     output_dot = Path(tempfile.tempdir, "tmp.dot")
     output_png = Path(output) if output else output_dot.with_suffix(".png")
     os.makedirs(output_png.parent, exist_ok=True)
-    Renderer(g3).gen_delta(file=output_dot)
+    Renderer(g3).gen_delta_dot_file(file=output_dot)
     render_dot_file(output_dot, output_png)
     rprint(f"Created [cyan]{output_png}[/cyan]")
 

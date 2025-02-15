@@ -1,4 +1,6 @@
 digraph D {
+    label="transitive not shown when path is visible diff";
+    
     node1 [fontname="Courier New",shape="rectangle",label="a"]
     
     node2 [fontname="Courier New",shape="rectangle",label="b"]

@@ -1,4 +1,6 @@
 digraph D {
+    label="new node and connection diff";
+    
     node1 [fontname="Courier New",shape="rectangle",label="b"]
     
     node2 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label="c"]

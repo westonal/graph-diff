@@ -1,4 +1,6 @@
 digraph D {
+    label="group change inside changing group diff";
+    
     subgraph cluster_node1 { /* :g1 */
         label=":g1";
         shape="rectangle";
