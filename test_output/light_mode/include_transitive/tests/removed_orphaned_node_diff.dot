@@ -1,0 +1,9 @@
+digraph D {
+    label="removed orphaned node diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
+    
+    node1 [color="#ff0000",fontcolor="#ff0000",fontname="Courier New",shape="rectangle",label="a"]
+    
+}

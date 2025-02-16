@@ -19,24 +19,28 @@ from ..graph_file import load_graph_from_deps_lines
 @click.option("--update", "-u", is_flag=True, help="Rewrite expected outputs")
 def cmd_tests(path, update):
     passed_count, failed_count = 0, 0
-    for dark_mode in [False, True]:
-        mode_passed_count, mode_failed_count = run_tests(path, update, dark_mode=dark_mode)
-        passed_count += mode_passed_count
-        failed_count += mode_failed_count
-    if failed_count:
-        fail(f"{failed_count}/{failed_count + passed_count} Tests failed")
-    else:
-        if not update:
-            rprint(f"[green]All {passed_count} tests passed")
+    for include_shortest_transitive_path in [False, True]:
+        for dark_mode in [False, True]:
+            mode_passed_count, mode_failed_count = run_tests(path, update, dark_mode=dark_mode,
+                                                             include_shortest_transitive_path=include_shortest_transitive_path)
+            passed_count += mode_passed_count
+            failed_count += mode_failed_count
+        if failed_count:
+            fail(f"{failed_count}/{failed_count + passed_count} Tests failed")
         else:
-            rprint(f"[green]{passed_count} tests updated")
+            if not update:
+                rprint(f"[green]All {passed_count} tests passed")
+            else:
+                rprint(f"[green]{passed_count} tests updated")
 
 
-def run_tests(path, update, dark_mode: bool, indent: int = 0):
+def run_tests(path, update, dark_mode: bool, include_shortest_transitive_path: bool, indent: int = 0):
     passed_count = 0
     failed_count = 0
     if os.path.isfile(path):
-        if run_test(path, update=update, indent=indent, dark_mode=dark_mode):
+        if run_test(path, update=update, indent=indent,
+                    dark_mode=dark_mode,
+                    include_shortest_transitive_path=include_shortest_transitive_path):
             passed_count += 1
         else:
             failed_count += 1
@@ -44,13 +48,13 @@ def run_tests(path, update, dark_mode: bool, indent: int = 0):
         action = "Running" if not update else "Updating"
         rprint(f"[yellow][bold]{action} test suite{' ([blue]dark mode[/])' if dark_mode else ''}: [cyan]{path}[/cyan]")
         for file_path in sorted(map(lambda p: os.path.join(path, p), os.listdir(path)), key=lambda f: os.path.isdir(f)):
-            passed, failed = run_tests(file_path, update=update, indent=indent + 1, dark_mode=dark_mode)
+            passed, failed = run_tests(file_path, update=update, indent=indent + 1, dark_mode=dark_mode, include_shortest_transitive_path=include_shortest_transitive_path)
             passed_count += passed
             failed_count += failed
     return passed_count, failed_count
 
 
-def run_test(file_path: Path, update, indent: int, dark_mode: bool):
+def run_test(file_path: Path, update, indent: int, dark_mode: bool, include_shortest_transitive_path: bool):
     file_path = Path(file_path)
     action = "Running" if not update else "Updating"
     for i in range(indent):
@@ -64,8 +68,12 @@ def run_test(file_path: Path, update, indent: int, dark_mode: bool):
         after = lines.index("> After\n")
         before = load_graph_from_deps_lines(lines[1:after])
         after = load_graph_from_deps_lines(lines[after + 1:])
-        compared = compare_graph(before, after, parent_function=gradle_split)
-        output_path = "dark_mode" if dark_mode else "light_mode"
+        compared = compare_graph(before, after, parent_function=gradle_split,
+                                 include_shortest_transitive_path=include_shortest_transitive_path,
+                                 )
+        output_path_1 = "dark_mode" if dark_mode else "light_mode"
+        output_path_2 = "include_transitive" if include_shortest_transitive_path else ""
+        output_path = os.path.join(output_path_1, output_path_2)
         test_output_png = Path(os.path.join("output", output_path, file_path)).with_suffix(".png")
         test_output_png.parent.mkdir(parents=True, exist_ok=True)
         expected_test_output_dot = Path(os.path.join("test_output", output_path, file_path)).with_suffix(".dot")

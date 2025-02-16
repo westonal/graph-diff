@@ -1,0 +1,21 @@
+digraph D {
+    label="single transitive connection diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
+    
+    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="a"]
+    
+    node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="b"]
+    
+    node3 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="c"]
+    
+    node4 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="d"]
+    
+    node5 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="i"]
+    
+    node1 -> node2 [arrowhead="empty",color="#158510",]
+    node1 -> node5 [arrowhead="empty",color="#000000",]
+    node3 -> node4 [arrowhead="empty",color="#158510",]
+    node5 -> node3 [arrowhead="empty",color="#000000",]
+}

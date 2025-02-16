@@ -2,19 +2,20 @@ import re
 from pathlib import Path
 
 import networkx as nx
+from networkx.classes import DiGraph
 from rich import print as rprint
 
 from .error import fail
 from .gradle import project_dependencies_to_deps
 
 
-def load_graph(input_file: str):
+def load_graph(input_file: str) -> DiGraph:
     with open(input_file, "r") as file:
         lines = file.readlines()
         return load_graph_from_deps_lines(lines)
 
 
-def load_graph_from_deps_lines(lines):
+def load_graph_from_deps_lines(lines) -> DiGraph:
     graph = nx.DiGraph()
     for line in lines:
         search = re.search(r"^(\S*)((?: -> \S*)*)", line)
@@ -33,7 +34,7 @@ def load_graph_from_deps_lines(lines):
     return graph
 
 
-def load_graph_from_argument(input_file: str, output_file: str):
+def load_graph_from_argument(input_file: str, output_file: str) -> DiGraph:
     if Path(input_file).suffix == ".deps":
         return load_graph(input_file=input_file)
     else:

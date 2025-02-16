@@ -20,6 +20,8 @@ class DotStyle:
     """fg_color if not overridden"""
     group_title_color: Optional[str] = None
     """fg_color if not overridden"""
+    transitive_color: str = None
+    """fg_color if not overridden"""
 
     def no_color(self):
         return self.copy(
@@ -39,6 +41,7 @@ dark_mode_style = DotStyle(
     fg_color="#ffffff",
     group_border_color="#7f7f7f",
     group_title_color="#bfbfbf",
+    transitive_color="#7f7f7f",
 )
 
 
@@ -67,7 +70,6 @@ class Renderer(object):
             if len(parents_with_state) == 1:
                 parent_name, state = parents_with_state[0]
                 parent_node = dot.new_item(parent_name, parent=parent)
-                color = None
                 if state == "newer":
                     color = self.style.new_color
                 elif state == "older":
@@ -101,6 +103,7 @@ class Renderer(object):
         old_nodes = self.graph_delta.nodes(data="old", default=False)
         parents = self.graph_delta.nodes(data="parent", default=None)
         labels = self.graph_delta.nodes(data="label", default=None)
+        nodes_data = self.graph_delta.nodes.data()
         for node in sorted(self.graph_delta.nodes):
             parent_node = None
             node_parent = parents[node]
@@ -115,6 +118,8 @@ class Renderer(object):
                 color = self.style.old_color
             else:
                 color = self.style.fg_color
+            if nodes_data[node].get("transitive"):
+                color = self.style.transitive_color or color
             dot.property_append(dot_node, "color", color)
             dot.property_append(dot_node, "fontcolor", color)
         for u, v, data in self.graph_delta.edges.data():
@@ -125,6 +130,8 @@ class Renderer(object):
                 color = self.style.old_color
             else:
                 color = self.style.fg_color
+            if data.get("transitive"):
+                color = self.style.transitive_color or color
             dot.property_append(link, "color", color)
             dot.property_append(link, "arrowhead", "empty")
             if data.get("indirect"):

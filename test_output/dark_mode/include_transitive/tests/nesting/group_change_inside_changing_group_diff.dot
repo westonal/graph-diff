@@ -1,0 +1,55 @@
+digraph D {
+    label="group change inside changing group diff";
+    bgcolor="#222222";
+    fontcolor="#ffffff";
+    fontname="Courier New";
+    
+    subgraph cluster_node1 { /* :g1 */
+        label=":g1";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        
+        node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label=":a"]
+    }
+    
+    subgraph cluster_node3 { /* :gx */
+        label=":gx";
+        style="rounded";
+        fontname="Courier New";
+        color="#ef3f3f";
+        fontcolor="#ef3f3f";
+        
+        subgraph cluster_node4 { /* :g2 */
+            label=":g2";
+            style="rounded";
+            fontname="Courier New";
+            color="#ef3f3f";
+            fontcolor="#ef3f3f";
+            
+            node5 [color="#ef3f3f",fontcolor="#ef3f3f",fontname="Courier New",shape="rectangle",label=":b"]
+        }
+    }
+    
+    subgraph cluster_node6 { /* :gy */
+        label=":gy";
+        style="rounded";
+        fontname="Courier New";
+        color="#15ef10";
+        fontcolor="#15ef10";
+        
+        subgraph cluster_node7 { /* :g3 */
+            label=":g3";
+            style="rounded";
+            fontname="Courier New";
+            color="#15ef10";
+            fontcolor="#15ef10";
+            
+            node8 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",label=":b"]
+        }
+    }
+    
+    node2 -> node5 [arrowhead="empty",color="#ef3f3f",]
+    node2 -> node8 [arrowhead="empty",color="#15ef10",]
+}

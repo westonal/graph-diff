@@ -1,0 +1,39 @@
+digraph D {
+    label="group change diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
+    
+    subgraph cluster_node1 { /* :g1 */
+        label=":g1";
+        style="rounded";
+        fontname="Courier New";
+        color="#000000";
+        fontcolor="#000000";
+        
+        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":a"]
+    }
+    
+    subgraph cluster_node3 { /* :g2 */
+        label=":g2";
+        style="rounded";
+        fontname="Courier New";
+        color="#ff0000";
+        fontcolor="#ff0000";
+        
+        node4 [color="#ff0000",fontcolor="#ff0000",fontname="Courier New",shape="rectangle",label=":b"]
+    }
+    
+    subgraph cluster_node5 { /* :g3 */
+        label=":g3";
+        style="rounded";
+        fontname="Courier New";
+        color="#158510";
+        fontcolor="#158510";
+        
+        node6 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label=":b"]
+    }
+    
+    node2 -> node4 [arrowhead="empty",color="#ff0000",]
+    node2 -> node6 [arrowhead="empty",color="#158510",]
+}
