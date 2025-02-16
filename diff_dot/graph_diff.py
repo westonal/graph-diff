@@ -81,5 +81,6 @@ def compare_graph(older, newer, parent_function=None):
             if visible_distance == 0 and distance > 1:
                 graph.add_edge(u, v)
                 graph.edges[u, v]["indirect"] = True
+                graph.edges[u, v]["indirect_distance"] = distance
 
     return graph

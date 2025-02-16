@@ -129,4 +129,12 @@ class Renderer(object):
             dot.property_append(link, "arrowhead", "empty")
             if data.get("indirect"):
                 dot.property_append(link, "style", "dashed")
+                distance = data.get("indirect_distance")
+                # 1 hop is a direct connection
+                # 2 can be an assumed number of hops for unlabelled
+                # 3 or more,we'll point out
+                if distance > 2:
+                    dot.property_append(link, "label", f'({distance})')
+                    dot.property_append(link, "fontcolor", color)
+                    dot.property_append(link, "fontname", self.style.font_name)
         return dot
