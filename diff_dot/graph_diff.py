@@ -1,7 +1,16 @@
 from itertools import pairwise
+from random import shuffle
+from typing import Any, Tuple, Dict
 
 import networkx as nx
 from networkx.classes import DiGraph
+from networkx.exception import NetworkXNoPath, NodeNotFound
+
+
+def shuffled(visible_nodes):
+    visible_nodes = list(visible_nodes)
+    shuffle(visible_nodes)
+    return visible_nodes
 
 
 def compare_graph(older: DiGraph,
@@ -96,20 +105,52 @@ def compare_graph(older: DiGraph,
     # Add existing edges for visible nodes that are linked
     for u in visible_nodes:
         for v in visible_nodes:
+            if u == v:
+                continue
             distance = (path_lengths_on_newer.get(u) or {}).get(v) or 0
             if distance == 1:
                 graph.add_edge(u, v)
                 new_visible_graph.add_edge(u, v)
 
     # Add indirect edges for all affected nodes with indirect connections
-    shortest_visible_lengths = dict(nx.all_pairs_bellman_ford_path_length(new_visible_graph))
-    for u in visible_nodes:
-        for v in visible_nodes:
-            distance = (path_lengths_on_newer.get(u) or {}).get(v) or 0
-            visible_distance = (shortest_visible_lengths.get(u) or {}).get(v) or 0
-            if visible_distance == 0 and distance > 1:
+    pairs_by_distance = _all_reachability_by_length(newer)
+
+    for distance in sorted(pairs_by_distance):
+        if distance <= 1:
+            continue
+
+        for (u, v) in pairs_by_distance[distance]:
+            if u not in visible_nodes or v not in visible_nodes:
+                continue
+
+            # If we cannot currently reach from u to v, it's indirect, add it
+            if _can_reach(new_visible_graph, u, v) == 0:
                 graph.add_edge(u, v)
+                new_visible_graph.add_edge(u, v)
                 graph.edges[u, v]["indirect"] = True
                 graph.edges[u, v]["indirect_distance"] = distance
 
     return graph
+
+
+def _can_reach(graph, u, v) -> int:
+    try:
+        return nx.bellman_ford_path_length(graph, u, v)
+    except NetworkXNoPath:
+        return 0
+    except NodeNotFound:
+        return 0
+
+
+def _all_reachability_by_length(graph: DiGraph) -> Dict[int, Tuple[Any, Any]]:
+    shortest_lengths = dict(nx.all_pairs_bellman_ford_path_length(graph))
+    pairs_by_distance = {}
+    for a in shortest_lengths:
+        reachables = shortest_lengths[a]
+        for b in reachables:
+            distance = reachables[b]
+            if distance:
+                l = pairs_by_distance.get(distance) or []
+                l.append((a, b))
+                pairs_by_distance[distance] = l
+    return pairs_by_distance
