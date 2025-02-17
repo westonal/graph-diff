@@ -1,0 +1,8 @@
+> Before
+:parent:a -> :other:b
+:other:b -> :parent:c
+> After
+:parent:a -> :other:b
+:other:b -> :parent:c
+:parent:a -> :parent:d
+:parent:c -> :parent:d

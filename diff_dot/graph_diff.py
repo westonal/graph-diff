@@ -58,48 +58,26 @@ def compare_graph(older: DiGraph,
     for old_node in old_nodes:
         graph.add_node(old_node)
         graph.nodes[old_node]["old"] = True
-    if parent_function:
-        old_parents = all_parents(older.nodes)
-        new_parents = all_parents(newer.nodes)
-        older_parents = old_parents - new_parents
-        newer_parents = new_parents - old_parents
-
-        def get_state(expanded):
-            state = None
-            if expanded in newer_parents:
-                state = "newer"
-            elif expanded in older_parents:
-                state = "older"
-            return state
-
-        def get_states(p):
-            expanded = expand(p)
-            return zip(p, list(map(get_state, expanded)))
-
-        for node in visible_nodes:
-            parents, name = parent_function(node)
-            if parents:
-                states = list(get_states(parents))
-                graph.nodes[node]["parent"] = states
-                graph.nodes[node]["label"] = name
 
     if include_shortest_transitive_path:
         paths = dict(nx.all_pairs_bellman_ford_path(newer))
-        for u in visible_nodes:
-            for v in visible_nodes:
+        currently_visible_nodes = list(visible_nodes)
+        for u in currently_visible_nodes:
+            for v in currently_visible_nodes:
                 path = (paths.get(u) or {}).get(v)
                 if not path or len(path) <= 2:  # only transitive
                     continue
                 for a, b in pairwise(path):
-                    if a in visible_nodes and b in visible_nodes:
+                    if a in currently_visible_nodes and b in currently_visible_nodes:
                         continue
                     get = graph.edges.get((a, b))
                     if not get:
                         graph.add_edge(a, b)
                         new_visible_graph.add_edge(a, b)
+                        visible_nodes.update({a, b})
                         graph.edges[a, b]["transitive"] = True
                         for node in [a, b]:
-                            if not node in visible_nodes:
+                            if not node in currently_visible_nodes:
                                 graph.nodes[node]["transitive"] = True
 
     # Add existing edges for visible nodes that are linked
@@ -129,6 +107,31 @@ def compare_graph(older: DiGraph,
                 new_visible_graph.add_edge(u, v)
                 graph.edges[u, v]["indirect"] = True
                 graph.edges[u, v]["indirect_distance"] = distance
+
+    if parent_function:
+        old_parents = all_parents(older.nodes)
+        new_parents = all_parents(newer.nodes)
+        older_parents = old_parents - new_parents
+        newer_parents = new_parents - old_parents
+
+        def get_state(expanded):
+            state = None
+            if expanded in newer_parents:
+                state = "newer"
+            elif expanded in older_parents:
+                state = "older"
+            return state
+
+        def get_states(p):
+            expanded = expand(p)
+            return zip(p, list(map(get_state, expanded)))
+
+        for node in visible_nodes:
+            parents, name = parent_function(node)
+            if parents:
+                states = list(get_states(parents))
+                graph.nodes[node]["parent"] = states
+                graph.nodes[node]["label"] = name
 
     return graph
 

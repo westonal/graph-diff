@@ -1,0 +1,33 @@
+digraph D {
+    label="transitive nested connection in own parent between visible nodes diff";
+    bgcolor="#ffffff";
+    fontcolor="#000000";
+    fontname="Courier New";
+    
+    subgraph cluster_node1 { /* :other */
+        label=":other";
+        style="rounded";
+        fontname="Courier New";
+        color="#000000";
+        fontcolor="#000000";
+        
+        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":b"]
+    }
+    
+    subgraph cluster_node3 { /* :parent */
+        label=":parent";
+        style="rounded";
+        fontname="Courier New";
+        color="#000000";
+        fontcolor="#000000";
+        
+        node4 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":a"]
+        node5 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":c"]
+        node6 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label=":d"]
+    }
+    
+    node2 -> node5 [arrowhead="empty",color="#000000",]
+    node4 -> node2 [arrowhead="empty",color="#000000",]
+    node4 -> node6 [arrowhead="empty",color="#158510",]
+    node5 -> node6 [arrowhead="empty",color="#158510",]
+}
