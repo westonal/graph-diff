@@ -18,10 +18,12 @@ def compare_graph(older: DiGraph,
                   parent_function=None,
                   *,
                   include_shortest_transitive_path: bool = False,
+                  include_new: bool = True,
+                  include_old: bool = True,
                   ):
     """The output is only changed edges and affected nodes"""
-    new_edges = newer.edges - older.edges
-    removed_edges = older.edges - newer.edges
+    new_edges = newer.edges - older.edges if include_new else []
+    removed_edges = older.edges - newer.edges if include_old else []
     graph = nx.DiGraph()
     new_visible_graph = nx.DiGraph()
     visible_nodes = set()
@@ -50,11 +52,11 @@ def compare_graph(older: DiGraph,
         graph.add_edge(u, v)
         graph.edges[u, v]["old"] = True
         visible_nodes.update({u, v})
-    new_nodes = newer.nodes - older.nodes
+    new_nodes = newer.nodes - older.nodes if include_new else []
     for new_node in new_nodes:
         graph.add_node(new_node)
         graph.nodes[new_node]["new"] = True
-    old_nodes = older.nodes - newer.nodes
+    old_nodes = older.nodes - newer.nodes if include_old else []
     for old_node in old_nodes:
         graph.add_node(old_node)
         graph.nodes[old_node]["old"] = True
