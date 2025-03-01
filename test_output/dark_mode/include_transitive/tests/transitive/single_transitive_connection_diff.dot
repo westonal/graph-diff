@@ -1,21 +1,22 @@
 digraph D {
     label="single transitive connection diff";
+    tooltip="single transitive connection diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
     
-    node1 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="a"]
+    node1 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip="a",label="a"]
     
-    node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="b"]
+    node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip="b",label="b"]
     
-    node3 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="c"]
+    node3 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip="c",label="c"]
     
-    node4 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label="d"]
+    node4 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip="d",label="d"]
     
-    node5 [color="#7f7f7f",fontcolor="#7f7f7f",fontname="Courier New",shape="rectangle",label="i"]
+    node5 [color="#7f7f7f",fontcolor="#7f7f7f",fontname="Courier New",shape="rectangle",tooltip="i",label="i"]
     
-    node1 -> node2 [arrowhead="empty",color="#15ef10",]
-    node1 -> node5 [arrowhead="empty",color="#7f7f7f",]
-    node3 -> node4 [arrowhead="empty",color="#15ef10",]
-    node5 -> node3 [arrowhead="empty",color="#7f7f7f",]
+    node1 -> node2 [arrowhead="empty",color="#15ef10",tooltip="a\n   ->\nb",]
+    node1 -> node5 [arrowhead="empty",color="#7f7f7f",tooltip="a\n   ->\ni",]
+    node3 -> node4 [arrowhead="empty",color="#15ef10",tooltip="c\n   ->\nd",]
+    node5 -> node3 [arrowhead="empty",color="#7f7f7f",tooltip="i\n   ->\nc",]
 }

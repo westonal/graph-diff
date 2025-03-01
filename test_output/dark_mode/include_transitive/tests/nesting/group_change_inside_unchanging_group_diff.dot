@@ -1,5 +1,6 @@
 digraph D {
     label="group change inside unchanging group diff";
+    tooltip="group change inside unchanging group diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -10,8 +11,9 @@ digraph D {
         fontname="Courier New";
         color="#bfbfbf";
         fontcolor="#bfbfbf";
+        tooltip=":g1";
         
-        node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",label=":a"]
+        node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g1:a",label=":a"]
     }
     
     subgraph cluster_node3 { /* :gx */
@@ -20,6 +22,7 @@ digraph D {
         fontname="Courier New";
         color="#bfbfbf";
         fontcolor="#bfbfbf";
+        tooltip=":gx";
         
         subgraph cluster_node4 { /* :g2 */
             label=":g2";
@@ -27,8 +30,9 @@ digraph D {
             fontname="Courier New";
             color="#ef3f3f";
             fontcolor="#ef3f3f";
+            tooltip=":gx:g2";
             
-            node5 [color="#ef3f3f",fontcolor="#ef3f3f",fontname="Courier New",shape="rectangle",label=":b"]
+            node5 [color="#ef3f3f",fontcolor="#ef3f3f",fontname="Courier New",shape="rectangle",tooltip=":gx:g2:b",label=":b"]
         }
         subgraph cluster_node6 { /* :g3 */
             label=":g3";
@@ -36,11 +40,12 @@ digraph D {
             fontname="Courier New";
             color="#15ef10";
             fontcolor="#15ef10";
+            tooltip=":gx:g3";
             
-            node7 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",label=":b"]
+            node7 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",tooltip=":gx:g3:b",label=":b"]
         }
     }
     
-    node2 -> node5 [arrowhead="empty",color="#ef3f3f",]
-    node2 -> node7 [arrowhead="empty",color="#15ef10",]
+    node2 -> node5 [arrowhead="empty",color="#ef3f3f",tooltip=":g1:a\n   ->\n:gx:g2:b",]
+    node2 -> node7 [arrowhead="empty",color="#15ef10",tooltip=":g1:a\n   ->\n:gx:g3:b",]
 }

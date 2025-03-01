@@ -1,16 +1,19 @@
 import os
 import re
 
+def project_dependencies_to_deps_lines(input_file: str) -> [str]:
+    """Reads output of gradle dependencies and returns a graph file containing the local projects interdependencies"""
+    with open(os.path.expanduser(input_file)) as file:
+        return project_dependencies_lines_to_deps(lines=file.readlines())
 
 def project_dependencies_to_deps(input_file: str, output_file: str):
     """Reads output of gradle dependencies and outputs a graph file containing the local projects interdependencies"""
-    with open(os.path.expanduser(input_file)) as file:
-        lines = project_dependencies_lines_to_deps(lines=file.readlines())
-        with open(output_file, "w") as output:
-            output.writelines(lines)
+    lines = project_dependencies_to_deps_lines(input_file)
+    with open(output_file, "w") as output:
+        output.writelines(lines)
 
 
-def project_dependencies_lines_to_deps(lines):
+def project_dependencies_lines_to_deps(lines) -> [str]:
     stack = []
     output_lines = []
     for line in lines:

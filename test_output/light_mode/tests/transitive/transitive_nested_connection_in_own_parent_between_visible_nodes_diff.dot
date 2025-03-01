@@ -1,5 +1,6 @@
 digraph D {
     label="transitive nested connection in own parent between visible nodes diff";
+    tooltip="transitive nested connection in own parent between visible nodes diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
@@ -10,13 +11,14 @@ digraph D {
         fontname="Courier New";
         color="#000000";
         fontcolor="#000000";
+        tooltip=":parent";
         
-        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":a"]
-        node3 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":c"]
-        node4 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label=":d"]
+        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip=":parent:a",label=":a"]
+        node3 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip=":parent:c",label=":c"]
+        node4 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":parent:d",label=":d"]
     }
     
-    node2 -> node3 [arrowhead="empty",color="#000000",style="dashed",]
-    node2 -> node4 [arrowhead="empty",color="#158510",]
-    node3 -> node4 [arrowhead="empty",color="#158510",]
+    node2 -> node3 [arrowhead="empty",color="#000000",style="dashed",tooltip=":parent:a\n   ->\n:parent:c",]
+    node2 -> node4 [arrowhead="empty",color="#158510",tooltip=":parent:a\n   ->\n:parent:d",]
+    node3 -> node4 [arrowhead="empty",color="#158510",tooltip=":parent:c\n   ->\n:parent:d",]
 }

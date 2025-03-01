@@ -1,11 +1,9 @@
-import re
 from pathlib import Path
 
-import networkx as nx
 from networkx.classes import DiGraph
 from rich import print as rprint
 
-from .error import fail
+from .dependencies import Dependencies
 from .gradle import project_dependencies_to_deps
 
 
@@ -16,22 +14,9 @@ def load_graph(input_file: str) -> DiGraph:
 
 
 def load_graph_from_deps_lines(lines) -> DiGraph:
-    graph = nx.DiGraph()
-    for line in lines:
-        search = re.search(r"^(\S*)((?: -> \S*)*)", line)
-        if not search:
-            fail("[red]Malformed input [line]")
-        u = search.group(1)
-        vs = search.group(2)
-        if not vs:
-            graph.add_node(u)
-        else:
-            all_v = re.findall(r"(?: -> )(\S*)", vs)
-            for v in all_v:
-                graph.add_edge(u, v)
-                u = v
-
-    return graph
+    dependencies = Dependencies()
+    dependencies.add_lines(lines)
+    return dependencies.to_digraph()
 
 
 def load_graph_from_argument(input_file: str, output_file: str) -> DiGraph:

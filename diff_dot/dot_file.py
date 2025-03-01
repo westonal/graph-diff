@@ -3,6 +3,7 @@ import os
 from io import TextIOWrapper
 from os import PathLike
 from pathlib import Path
+from typing import Optional
 
 
 class Props(object):
@@ -38,9 +39,10 @@ class Link(object):
 
 
 class Node(object):
-    def __init__(self, name, label, parent):
+    def __init__(self, name, label, tooltip, parent):
         self.name = name
         self.label = label
+        self.tooltip = tooltip
         self.parent = parent
         self.children = []
         self.props = Props()
@@ -54,25 +56,32 @@ class Node(object):
 
 class Dot(object):
 
-    def __init__(self, title: str = ""):
+    def __init__(self,
+                 caption: str = "",
+                 tooltip: Optional[str] = None):
         self._nodes = {}
         self._links = []
         self._root_props = Props()
         self._node_default_style = Props()
         self._subgraph_default_style = Props()
-        if title:
-            self.style_default_append("label", title)
+        if caption:
+            self.style_default_append("label", self.escape_new_line(caption))
+            self.style_default_append("tooltip", self.escape_new_line(tooltip or caption))
 
-    def new_item(self, label, parent=None, node_name=None):
+    def new_item(self, label, tooltip=None, parent=None, node_name=None):
         node_name = node_name or self._auto_node_name()
         existing = self._nodes.get(node_name)
         if existing:
             return existing
-        node = Node(name=node_name, label=label, parent=parent)
+        node = Node(name=node_name, label=label, tooltip=tooltip or label, parent=parent)
         self._nodes[node_name] = node
         if parent:
             parent.add_child(node)
         return node
+
+    @classmethod
+    def escape_new_line(cls, string: str):
+        return string.replace("\n", "\\n")
 
     @staticmethod
     def property_append(node_or_link, param_key, param_value):

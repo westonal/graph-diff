@@ -1,5 +1,6 @@
 digraph D {
     label="new connection in second group diff";
+    tooltip="new connection in second group diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
@@ -10,8 +11,9 @@ digraph D {
         fontname="Courier New";
         color="#000000";
         fontcolor="#000000";
+        tooltip=":g1";
         
-        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":a"]
+        node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip=":g1:a",label=":a"]
     }
     
     subgraph cluster_node3 { /* :g2 */
@@ -20,9 +22,10 @@ digraph D {
         fontname="Courier New";
         color="#000000";
         fontcolor="#000000";
+        tooltip=":g2";
         
-        node4 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label=":c"]
+        node4 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip=":g2:c",label=":c"]
     }
     
-    node2 -> node4 [arrowhead="empty",color="#158510",]
+    node2 -> node4 [arrowhead="empty",color="#158510",tooltip=":g1:a\n   ->\n:g2:c",]
 }

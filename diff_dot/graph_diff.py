@@ -134,6 +134,7 @@ def compare_graph(older: DiGraph,
                 states = list(get_states(parents))
                 graph.nodes[node]["parent"] = states
                 graph.nodes[node]["label"] = name
+                graph.nodes[node]["full_name"] = node
 
     return graph
 

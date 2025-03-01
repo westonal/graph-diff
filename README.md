@@ -166,6 +166,14 @@ uv run main.py tests
 The dot file output is committed to this repo as the expected result.
 If the output changes expectedly, you can run `python main.py tests -u` to update the output.
 
+Also run:
+
+```shell
+uv run pytest
+```
+
+For regular code tests.
+
 Requirements
 ===
 

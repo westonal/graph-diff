@@ -74,8 +74,6 @@ def run_test(file_path: Path, update, indent: int, dark_mode: bool, include_shor
         output_path_1 = "dark_mode" if dark_mode else "light_mode"
         output_path_2 = "include_transitive" if include_shortest_transitive_path else ""
         output_path = os.path.join(output_path_1, output_path_2)
-        test_output_png = Path(os.path.join("output", output_path, file_path)).with_suffix(".png")
-        test_output_png.parent.mkdir(parents=True, exist_ok=True)
         expected_test_output_dot = Path(os.path.join("test_output", output_path, file_path)).with_suffix(".dot")
         file_output_dot = expected_test_output_dot if update else Path(
             os.path.join(tempfile.gettempdir(), file_path)
@@ -85,7 +83,12 @@ def run_test(file_path: Path, update, indent: int, dark_mode: bool, include_shor
                  dark_mode=dark_mode,
                  ).gen_delta_dot_file(file=file_output_dot)
         os.makedirs(file_output_dot.parent, exist_ok=True)
-        render_dot_file(file_output_dot, test_output_png)
+
+        for extension in [".png", ".svg"]:
+            test_output_image = Path(os.path.join("output", output_path, file_path)).with_suffix(extension)
+            test_output_image.parent.mkdir(parents=True, exist_ok=True)
+            render_dot_file(input_dot_path=file_output_dot, output_image_path=test_output_image)
+
         if not update:
             if not os.path.exists(expected_test_output_dot):
                 rprint("[red]Expected output missing")

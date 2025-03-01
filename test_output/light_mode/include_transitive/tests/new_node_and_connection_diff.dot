@@ -1,12 +1,13 @@
 digraph D {
     label="new node and connection diff";
+    tooltip="new node and connection diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
     
-    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="b"]
+    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip="b",label="b"]
     
-    node2 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",label="c"]
+    node2 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip="c",label="c"]
     
-    node1 -> node2 [arrowhead="empty",color="#158510",]
+    node1 -> node2 [arrowhead="empty",color="#158510",tooltip="b\n   ->\nc",]
 }

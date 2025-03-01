@@ -1,12 +1,13 @@
 digraph D {
     label="connection made transitive diff";
+    tooltip="connection made transitive diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
     
-    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="a"]
+    node1 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip="a",label="a"]
     
-    node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",label="c"]
+    node2 [color="#000000",fontcolor="#000000",fontname="Courier New",shape="rectangle",tooltip="c",label="c"]
     
-    node1 -> node2 [arrowhead="empty",color="#ff0000",style="dashed",]
+    node1 -> node2 [arrowhead="empty",color="#ff0000",style="dashed",tooltip="a\n   ->\nc",]
 }
