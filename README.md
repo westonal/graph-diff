@@ -1,4 +1,7 @@
 
+[![PyPI - Version](https://img.shields.io/pypi/v/diff-dot)](https://pypi.org/project/diff-dot/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/diff-dot)](https://pypi.org/project/diff-dot/)
+
 This library compares two directional graphs and outputs the diff result as a dot file.
 Primary intended use is to compare changes in software dependencies, for example in gradle projects though it is designed to not be limited to gradle.
 
