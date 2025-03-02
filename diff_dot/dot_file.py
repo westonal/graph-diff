@@ -39,10 +39,10 @@ class Link(object):
 
 
 class Node(object):
-    def __init__(self, name, label, tooltip, parent):
+    def __init__(self, *, name, label, full_name, parent):
         self.name = name
         self.label = label
-        self.tooltip = tooltip
+        self.full_name = full_name
         self.parent = parent
         self.children = []
         self.props = Props()
@@ -68,12 +68,12 @@ class Dot(object):
             self.style_default_append("label", self.escape_new_line(caption))
             self.style_default_append("tooltip", self.escape_new_line(tooltip or caption))
 
-    def new_item(self, label, tooltip=None, parent=None, node_name=None):
+    def new_item(self, *, label: str, full_name: str, parent=None, node_name=None):
         node_name = node_name or self._auto_node_name()
         existing = self._nodes.get(node_name)
         if existing:
             return existing
-        node = Node(name=node_name, label=label, tooltip=tooltip or label, parent=parent)
+        node = Node(name=node_name, label=label, full_name=full_name, parent=parent)
         self._nodes[node_name] = node
         if parent:
             parent.add_child(node)

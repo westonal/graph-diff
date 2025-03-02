@@ -63,28 +63,28 @@ class Renderer(object):
         self.nodes = {}
         self.caption = caption
 
-    def _find_parent(self, dot: Dot, parents_with_state, parent=None):
-        key = tuple(map(lambda p: p[0], parents_with_state))
+    def _find_parent(self, dot: Dot, parents_with_state: [str], parent=None):
+        if len(parents_with_state) > 1:
+            grand_parent = self._find_parent(dot, parents_with_state[0:-1])
+            return self._find_parent(dot, parents_with_state[-1:], parent=grand_parent)
+
+        parent_name, state = parents_with_state[0]
+        key = f"{parent.full_name}{parent_name}" if parent else parent_name
         parent_node = self.nodes.get(key, None)
         if not parent_node:
-            if len(parents_with_state) == 1:
-                parent_name, state = parents_with_state[0]
-                tooltip = f"{parent.tooltip}{parent_name}" if parent else parent_name
-                parent_node = dot.new_item(parent_name, parent=parent, tooltip=tooltip)
-                if state == "newer":
-                    color = self.style.new_color
-                elif state == "older":
-                    color = self.style.old_color
-                else:
-                    color = self.style.group_title_color or self.style.fg_color
-                dot.property_append(parent_node, "color", color or self.style.group_border_color)
-                dot.property_append(parent_node, "fontcolor", color or self.style.group_title_color)
-                dot.property_append(parent_node, "tooltip", Dot.escape_new_line(parent_node.tooltip))
-                self.nodes[key] = parent_node
+            parent_name, state = parents_with_state[0]
+            full_name = f"{parent.full_name}{parent_name}" if parent else parent_name
+            parent_node = dot.new_item(label=parent_name, parent=parent, full_name=full_name)
+            if state == "newer":
+                color = self.style.new_color
+            elif state == "older":
+                color = self.style.old_color
             else:
-                grand_parent = self._find_parent(dot, parents_with_state[0:-1])
-                parent_node = self._find_parent(dot, parents_with_state[-1:], parent=grand_parent)
-                self.nodes[key] = parent_node
+                color = self.style.group_title_color or self.style.fg_color
+            dot.property_append(parent_node, "color", color or self.style.group_border_color)
+            dot.property_append(parent_node, "fontcolor", color or self.style.group_title_color)
+            dot.property_append(parent_node, "tooltip", Dot.escape_new_line(parent_node.full_name))
+            self.nodes[key] = parent_node
         return parent_node
 
     def gen_delta_dot_file(self, file=Path("output/graph.dot")):
@@ -105,7 +105,7 @@ class Renderer(object):
         old_nodes = self.graph_delta.nodes(data="old", default=False)
         parents = self.graph_delta.nodes(data="parent", default=None)
         labels = self.graph_delta.nodes(data="label", default=None)
-        full_names = dict(self.graph_delta.nodes(data="full_name", default=None))
+        full_names = self.graph_delta.nodes(data="full_name", default=None)
         nodes_data = self.graph_delta.nodes.data()
         for node in sorted(self.graph_delta.nodes):
             parent_node = None
@@ -113,7 +113,7 @@ class Renderer(object):
             if node_parent:
                 parent_node = self._find_parent(dot, node_parent)
             label = labels[node] or node
-            dot_node = dot.new_item(label, tooltip=full_names[node], parent=parent_node)
+            dot_node = dot.new_item(label=label, full_name=full_names[node] or label, parent=parent_node)
             self.nodes[node] = dot_node
             if new_nodes[node]:
                 color = self.style.new_color
@@ -125,7 +125,7 @@ class Renderer(object):
                 color = self.style.transitive_color or color
             dot.property_append(dot_node, "color", color)
             dot.property_append(dot_node, "fontcolor", color)
-            dot.property_append(dot_node, "tooltip", Dot.escape_new_line(dot_node.tooltip))
+            dot.property_append(dot_node, "tooltip", Dot.escape_new_line(dot_node.full_name))
         for u, v, data in self.graph_delta.edges.data():
             link = dot.new_link(self.nodes[u], self.nodes[v])
             if data.get("new"):
@@ -138,7 +138,8 @@ class Renderer(object):
                 color = self.style.transitive_color or color
             dot.property_append(link, "color", color)
             dot.property_append(link, "arrowhead", "empty")
-            dot.property_append(link, "tooltip", Dot.escape_new_line(f"{self.nodes[u].tooltip}\n   ->\n{self.nodes[v].tooltip}"))
+            dot.property_append(link, "tooltip",
+                                Dot.escape_new_line(f"{self.nodes[u].full_name}\n   ->\n{self.nodes[v].full_name}"))
 
             if data.get("indirect"):
                 dot.property_append(link, "style", "dashed")

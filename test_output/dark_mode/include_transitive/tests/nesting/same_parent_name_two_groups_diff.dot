@@ -1,0 +1,52 @@
+digraph D {
+    label="same parent name two groups diff";
+    tooltip="same parent name two groups diff";
+    bgcolor="#222222";
+    fontcolor="#ffffff";
+    fontname="Courier New";
+    
+    subgraph cluster_node1 { /* :g1 */
+        label=":g1";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        tooltip=":g1";
+        
+        subgraph cluster_node2 { /* :p */
+            label=":p";
+            style="rounded";
+            fontname="Courier New";
+            color="#bfbfbf";
+            fontcolor="#bfbfbf";
+            tooltip=":g1:p";
+            
+            node3 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g1:p:a",label=":a"]
+        }
+    }
+    
+    subgraph cluster_node4 { /* :g2 */
+        label=":g2";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        tooltip=":g2";
+        
+        subgraph cluster_node5 { /* :p */
+            label=":p";
+            style="rounded";
+            fontname="Courier New";
+            color="#bfbfbf";
+            fontcolor="#bfbfbf";
+            tooltip=":g2:p";
+            
+            node6 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g2:p:a",label=":a"]
+            node7 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",tooltip=":g2:p:c",label=":c"]
+        }
+    }
+    
+    node3 -> node6 [arrowhead="empty",color="#ffffff",tooltip=":g1:p:a\n   ->\n:g2:p:a",]
+    node3 -> node7 [arrowhead="empty",color="#15ef10",tooltip=":g1:p:a\n   ->\n:g2:p:c",]
+    node6 -> node7 [arrowhead="empty",color="#15ef10",tooltip=":g2:p:a\n   ->\n:g2:p:c",]
+}
