@@ -1,5 +1,7 @@
 """Dot file generation"""
+import copy
 import os
+from functools import cached_property
 from io import TextIOWrapper
 from os import PathLike
 from pathlib import Path
@@ -13,10 +15,21 @@ class Props(object):
     def __setitem__(self, key, value):
         self.props[key] = value
 
+    def __copy__(self):
+        return Props(content=dict(self.props))
+
+    def lines(self, *, sort=False):
+        for key in sorted(self.props) if sort else self.props:
+            value = self.props[key]
+            if type(value) is bool:
+                yield f'{key}={"true" if value else "false"}'
+            else:
+                yield f'{key}="{value}"'
+
     def properties_string(self):
         result = ""
-        for key in sorted(self.props):
-            result += f'{key}="{self.props[key]}",'
+        for line in self.lines(sort=True):
+            result += f'{line},'
         return result
 
     def __str__(self):
@@ -29,7 +42,7 @@ class Props(object):
 
 
 class Link(object):
-    def __init__(self, u, v):
+    def __init__(self, u: "Node", v: "Node"):
         self.u = u
         self.v = v
         self.props = Props()
@@ -52,6 +65,16 @@ class Node(object):
 
     def __str__(self):
         return f'{self.name} ("{self.label}")'
+
+    @cached_property
+    def cluster_name(self):
+        return f'cluster_{self.name}'
+
+    def link(self) -> "Node":
+        """Which node should be linked to"""
+        if self.children:
+            return self.children[0].link()
+        return self
 
 
 class Dot(object):
@@ -114,12 +137,23 @@ class Dot(object):
                 writer.write_line()
 
             for link in sorted(self._links, key=lambda l: (l.u.name, l.v.name)):
-                writer.write_line(f"{link.u.name} -> {link.v.name} [{link.props}]")
+                self._write_link(link, writer)
         writer.write_line("}")
+
+    @staticmethod
+    def _write_link(link: Link, writer):
+        from_node = link.u.link()
+        to_node = link.v.link()
+        props = copy.copy(link.props)
+        if from_node != link.u:
+            props["ltail"] = link.u.cluster_name
+        if to_node != link.v:
+            props["lhead"] = link.v.cluster_name
+        writer.write_line(f"{from_node.name} -> {to_node.name} [{props}]")
 
     def write_node(self, writer, node):
         if node.children:
-            writer.write_line(f'subgraph cluster_{node.name} {{ /* {node.label} */')
+            writer.write_line(f'subgraph {node.cluster_name} {{ /* {node.label} */')
             with writer.indent():
                 writer.write_line(f'label="{node.label}";')
                 props = self._subgraph_default_style.override(node.props)
@@ -131,13 +165,16 @@ class Dot(object):
         else:
             writer.write_line(f'{node.name} [{self._node_default_style.override(node.props)}label="{node.label}"]')
 
-    def new_link(self, node_u, node_v):
+    def new_link(self, node_u: Node, node_v: Node):
         link = Link(node_u, node_v)
         self._links.append(link)
         return link
 
     def _auto_node_name(self):
         return f"node{len(self._nodes) + 1}"
+
+    def needs_compound(self):
+        return any([l.u.link() != l.u or l.v.link() != l.v for l in self._links])
 
 
 class IndentedWriter(object):
@@ -161,10 +198,9 @@ class IndentedWriter(object):
         return Indenter(self)
 
     def write_props(self, props: Props) -> bool:
-        props = props.props
-        for prop in props:
-            self.write_line(f'{prop}="{props[prop]}";')
-        return True if props else False
+        for prop in props.lines():
+            self.write_line(f'{prop};')
+        return True if props.props else False
 
 
 class Indenter(object):

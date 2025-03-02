@@ -151,4 +151,8 @@ class Renderer(object):
                     dot.property_append(link, "label", f'({distance})')
                     dot.property_append(link, "fontcolor", color)
                     dot.property_append(link, "fontname", self.style.font_name)
+
+        if dot.needs_compound():
+            dot.style_default_append("compound", True)
+
         return dot

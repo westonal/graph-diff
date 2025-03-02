@@ -1,0 +1,12 @@
+> Before
+:g1:a -> :g2:a
+:g3:a -> :g4:a
+:g5:a -> :g6:a
+:g7:a -> :g8:a
+> After
+:g1:a -> :g2
+:g1:a -> :g2:a
+:g3:a -> :g4:a
+:g3 -> :g4:a
+:g5 -> :g6:a
+:g7:a -> :g8

@@ -1,0 +1,85 @@
+digraph D {
+    label="link to parent diff";
+    tooltip="link to parent diff";
+    bgcolor="#222222";
+    fontcolor="#ffffff";
+    fontname="Courier New";
+    compound=true;
+    
+    subgraph cluster_node1 { /* :g1 */
+        label=":g1";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        tooltip=":g1";
+        
+        node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g1:a",label=":a"]
+    }
+    
+    subgraph cluster_node11 { /* :g7 */
+        label=":g7";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        tooltip=":g7";
+        
+        node12 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g7:a",label=":a"]
+    }
+    
+    subgraph cluster_node13 { /* :g8 */
+        label=":g8";
+        style="rounded";
+        fontname="Courier New";
+        color="#15ef10";
+        fontcolor="#15ef10";
+        tooltip=":g8";
+        
+        node14 [color="#ef3f3f",fontcolor="#ef3f3f",fontname="Courier New",shape="rectangle",tooltip=":g8:a",label=":a"]
+    }
+    
+    node3 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",tooltip=":g2",label=":g2"]
+    
+    node4 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",tooltip=":g3",label=":g3"]
+    
+    subgraph cluster_node5 { /* :g4 */
+        label=":g4";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        tooltip=":g4";
+        
+        node6 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g4:a",label=":a"]
+    }
+    
+    subgraph cluster_node7 { /* :g5 */
+        label=":g5";
+        style="rounded";
+        fontname="Courier New";
+        color="#15ef10";
+        fontcolor="#15ef10";
+        tooltip=":g5";
+        
+        node8 [color="#ef3f3f",fontcolor="#ef3f3f",fontname="Courier New",shape="rectangle",tooltip=":g5:a",label=":a"]
+    }
+    
+    subgraph cluster_node9 { /* :g6 */
+        label=":g6";
+        style="rounded";
+        fontname="Courier New";
+        color="#bfbfbf";
+        fontcolor="#bfbfbf";
+        tooltip=":g6";
+        
+        node10 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g6:a",label=":a"]
+    }
+    
+    node12 -> node14 [arrowhead="empty",color="#15ef10",lhead="cluster_node13",tooltip=":g7:a\n   ->\n:g8",]
+    node12 -> node14 [arrowhead="empty",color="#ef3f3f",tooltip=":g7:a\n   ->\n:g8:a",]
+    node2 -> node3 [arrowhead="empty",color="#15ef10",tooltip=":g1:a\n   ->\n:g2",]
+    node4 -> node6 [arrowhead="empty",color="#15ef10",tooltip=":g3\n   ->\n:g4:a",]
+    node8 -> node10 [arrowhead="empty",color="#15ef10",ltail="cluster_node7",tooltip=":g5\n   ->\n:g6:a",]
+    node8 -> node10 [arrowhead="empty",color="#ef3f3f",tooltip=":g5:a\n   ->\n:g6:a",]
+}
