@@ -40,6 +40,9 @@ class Props(object):
         copy.update(override_props.props)
         return Props(content=copy)
 
+    def copy_from(self, props: "Props"):
+        self.props = dict(props.props)
+
 
 class Link(object):
     def __init__(self, u: "Node", v: "Node"):
@@ -76,6 +79,13 @@ class Node(object):
             return self.children[0].link()
         return self
 
+    def find_in_hierarchy(self, other: "Node") -> Optional["Node"]:
+        if other == self:
+            return self
+        if self.parent:
+            return self.parent.find_in_hierarchy(other)
+        return None
+
 
 class Dot(object):
 
@@ -84,6 +94,7 @@ class Dot(object):
                  tooltip: Optional[str] = None):
         self._nodes = {}
         self._links = []
+        self._cluster_nodes = {}
         self._root_props = Props()
         self._node_default_style = Props()
         self._subgraph_default_style = Props()
@@ -132,24 +143,34 @@ class Dot(object):
         with writer.indent():
             if writer.write_props(self._root_props):
                 writer.write_line()
+
+            link_lines = [self._link_line(link) for link in sorted(self._links, key=lambda l: (l.u.name, l.v.name))]
+
             for node in sorted(filter(lambda p: not p.parent, self._nodes.values()), key=lambda n: n.name):
                 self.write_node(writer, node)
                 writer.write_line()
 
-            for link in sorted(self._links, key=lambda l: (l.u.name, l.v.name)):
-                self._write_link(link, writer)
+            for link in link_lines:
+                writer.write_line(link)
         writer.write_line("}")
 
-    @staticmethod
-    def _write_link(link: Link, writer):
+    def _link_line(self, link: Link) -> str:
         from_node = link.u.link()
         to_node = link.v.link()
         props = copy.copy(link.props)
         if from_node != link.u:
-            props["ltail"] = link.u.cluster_name
+            ancestor = to_node.find_in_hierarchy(link.u)
+            if ancestor:
+                from_node = self.cluster_node(ancestor)
+            else:
+                props["ltail"] = link.u.cluster_name
         if to_node != link.v:
-            props["lhead"] = link.v.cluster_name
-        writer.write_line(f"{from_node.name} -> {to_node.name} [{props}]")
+            ancestor = from_node.find_in_hierarchy(link.v)
+            if ancestor:
+                to_node = self.cluster_node(ancestor)
+            else:
+                props["lhead"] = link.v.cluster_name
+        return f"{from_node.name} -> {to_node.name} [{props}]"
 
     def write_node(self, writer, node):
         if node.children:
@@ -175,6 +196,14 @@ class Dot(object):
 
     def needs_compound(self):
         return any([l.u.link() != l.u or l.v.link() != l.v for l in self._links])
+
+    def cluster_node(self, node: Node):
+        cluster_node = self._cluster_nodes.get(node, None)
+        if not cluster_node:
+            cluster_node = self.new_item(label="", full_name="", parent=node)
+            cluster_node.props.copy_from(node.props)
+            cluster_node.props["shape"] = "point"
+        return cluster_node
 
 
 class IndentedWriter(object):
