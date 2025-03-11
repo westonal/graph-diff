@@ -2,7 +2,7 @@
 import copy
 import os
 from functools import cached_property
-from io import TextIOWrapper
+from io import TextIOWrapper, StringIO, SEEK_SET
 from os import PathLike
 from pathlib import Path
 from typing import Optional
@@ -140,8 +140,15 @@ class Dot(object):
     def style_default_append(self, param_key, param_value):
         self._root_props[param_key] = param_value
 
+    def __str__(self) -> str:
+        io = StringIO()
+        self.write_dot_file(io)
+        io.flush()
+        io.seek(0, SEEK_SET)
+        return io.read()
+
     def write_dot_file(self, file: [TextIOWrapper | PathLike | str], make_dirs: bool = True):
-        if not isinstance(file, TextIOWrapper):
+        if isinstance(file, PathLike) or type(file) == str:
             if make_dirs:
                 os.makedirs(Path(file).parent, exist_ok=True)
             with open(file, "w") as fileIO:

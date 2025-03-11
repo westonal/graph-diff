@@ -76,28 +76,18 @@ def run_test(file_path: Path, update, indent: int, dark_mode: bool, include_shor
         output_path_2 = "include_transitive" if include_shortest_transitive_path else ""
         output_path = os.path.join(output_path_1, output_path_2)
         expected_test_output_dot = Path(os.path.join("test_output", output_path, file_path)).with_suffix(".dot")
-        file_output_dot = expected_test_output_dot if update else Path(
-            os.path.join(tempfile.gettempdir(), file_path)
-        ).with_suffix(".dot")
-        Renderer(compared,
-                 caption=file_path.stem.replace("_", " "),
-                 dark_mode=dark_mode,
-                 ).gen_delta_dot_file(file=file_output_dot)
-        os.makedirs(file_output_dot.parent, exist_ok=True)
-
-        for extension in [".png", ".svg"]:
-            test_output_image = Path(os.path.join("output", output_path, file_path)).with_suffix(extension)
-            test_output_image.parent.mkdir(parents=True, exist_ok=True)
-            render_dot_file(input_dot_path=file_output_dot, output_image_path=test_output_image)
+        actual_dot = Renderer(compared,
+                              caption=file_path.stem.replace("_", " "),
+                              dark_mode=dark_mode,
+                              ).dot
+        actual_lines = f"{actual_dot}"
 
         if not update:
             if not os.path.exists(expected_test_output_dot):
                 rprint("[red]Expected output missing")
                 return False
             with open(expected_test_output_dot) as expected:
-                expected_lines = expected.readlines()
-            with open(file_output_dot) as actual:
-                actual_lines = actual.readlines()
+                expected_lines = expected.read()
             if expected_lines != actual_lines:
                 rprint("[red]Output not as expected")
                 return False
@@ -105,5 +95,12 @@ def run_test(file_path: Path, update, indent: int, dark_mode: bool, include_shor
                 rprint("[green]pass")
                 return True
         else:
+            os.makedirs(expected_test_output_dot.parent, exist_ok=True)
+            with open(expected_test_output_dot, "w") as expected:
+                expected.write(actual_lines)
+            for extension in [".png", ".svg"]:
+                test_output_image = Path(os.path.join("output", output_path, file_path)).with_suffix(extension)
+                test_output_image.parent.mkdir(parents=True, exist_ok=True)
+                render_dot_file(input_dot_path=expected_test_output_dot, output_image_path=test_output_image)
             rprint("[green]Done")
             return True
