@@ -1,6 +1,6 @@
 digraph D {
-    label="removed node and connection diff";
     tooltip="removed node and connection diff";
+    label="removed node and connection diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -9,5 +9,5 @@ digraph D {
     
     node2 [color="#ef3f3f",fontcolor="#ef3f3f",fontname="Courier New",shape="rectangle",tooltip="c",label="c"]
     
-    node1 -> node2 [arrowhead="empty",color="#ef3f3f",tooltip="b\n   ->\nc",]
+    node1 -> node2 [arrowhead="vee",color="#ef3f3f",tooltip="b\n   ->\nc",]
 }

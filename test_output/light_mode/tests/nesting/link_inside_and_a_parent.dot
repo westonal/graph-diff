@@ -1,6 +1,6 @@
 digraph D {
-    label="link inside and a parent";
     tooltip="link inside and a parent";
+    label="link inside and a parent";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
@@ -15,7 +15,51 @@ digraph D {
         tooltip=":g1";
         
         node2 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g1:a",label=":a"]
-        node11 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g1",label=""]
+        node21 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g1",label=""]
+    }
+    
+    subgraph cluster_node11 { /* :g5 */
+        label=":g5";
+        style="rounded";
+        fontname="Courier New";
+        color="#158510";
+        fontcolor="#158510";
+        tooltip=":g5";
+        
+        subgraph cluster_node12 { /* :g2 */
+            label=":g2";
+            style="rounded";
+            fontname="Courier New";
+            color="#158510";
+            fontcolor="#158510";
+            tooltip=":g5:g2";
+            
+            node13 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g5:g2:a",label=":a"]
+            node14 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g5:g2:b",label=":b"]
+        }
+        node19 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g5",label=""]
+    }
+    
+    subgraph cluster_node15 { /* :g6 */
+        label=":g6";
+        style="rounded";
+        fontname="Courier New";
+        color="#158510";
+        fontcolor="#158510";
+        tooltip=":g6";
+        
+        subgraph cluster_node16 { /* :g2 */
+            label=":g2";
+            style="rounded";
+            fontname="Courier New";
+            color="#158510";
+            fontcolor="#158510";
+            tooltip=":g6:g2";
+            
+            node17 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g6:g2:a",label=":a"]
+            node18 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g6:g2:b",label=":b"]
+        }
+        node20 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g6",label=""]
     }
     
     subgraph cluster_node3 { /* :g2 */
@@ -27,7 +71,7 @@ digraph D {
         tooltip=":g2";
         
         node4 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g2:a",label=":a"]
-        node12 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g2",label=""]
+        node22 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g2",label=""]
     }
     
     subgraph cluster_node5 { /* :g3 */
@@ -48,7 +92,7 @@ digraph D {
             
             node7 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g3:g2:a",label=":a"]
         }
-        node13 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g3",label=""]
+        node23 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g3",label=""]
     }
     
     subgraph cluster_node8 { /* :g4 */
@@ -69,11 +113,15 @@ digraph D {
             
             node10 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g4:g2:a",label=":a"]
         }
-        node14 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g4",label=""]
+        node24 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="point",tooltip=":g4",label=""]
     }
     
-    node2 -> node11 [arrowhead="empty",color="#158510",tooltip=":g1:a\n   ->\n:g1",]
-    node12 -> node4 [arrowhead="empty",color="#158510",tooltip=":g2\n   ->\n:g2:a",]
-    node7 -> node13 [arrowhead="empty",color="#158510",tooltip=":g3:g2:a\n   ->\n:g3",]
-    node14 -> node10 [arrowhead="empty",color="#158510",tooltip=":g4\n   ->\n:g4:g2:a",]
+    node13 -> node19 [arrowhead="vee",color="#158510",tooltip=":g5:g2:a\n   ->\n:g5",]
+    node14 -> node19 [arrowhead="vee",color="#158510",tooltip=":g5:g2:b\n   ->\n:g5",]
+    node20 -> node17 [arrowhead="vee",color="#158510",tooltip=":g6\n   ->\n:g6:g2:a",]
+    node20 -> node18 [arrowhead="vee",color="#158510",tooltip=":g6\n   ->\n:g6:g2:b",]
+    node2 -> node21 [arrowhead="vee",color="#158510",tooltip=":g1:a\n   ->\n:g1",]
+    node22 -> node4 [arrowhead="vee",color="#158510",tooltip=":g2\n   ->\n:g2:a",]
+    node7 -> node23 [arrowhead="vee",color="#158510",tooltip=":g3:g2:a\n   ->\n:g3",]
+    node24 -> node10 [arrowhead="vee",color="#158510",tooltip=":g4\n   ->\n:g4:g2:a",]
 }

@@ -53,7 +53,7 @@ class Dependencies:
                 u = v
 
     def list(self) -> [Dependency]:
-        return list(self._dependencies)
+        return sorted(list(self._dependencies), key=lambda d: (d.from_name, d.to_name))
 
     def add_lines(self, lines: [str]):
         for line in lines:
@@ -64,7 +64,7 @@ class Dependencies:
         new_dependencies._dependencies.update(self._dependencies)
         return new_dependencies
 
-    def remove(self, d:Dependency):
+    def remove(self, d: Dependency):
         self._dependencies.remove(d)
 
     def to_digraph(self) -> DiGraph:

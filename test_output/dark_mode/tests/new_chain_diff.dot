@@ -1,6 +1,6 @@
 digraph D {
-    label="new chain diff";
     tooltip="new chain diff";
+    label="new chain diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -15,9 +15,9 @@ digraph D {
     
     node5 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip="e",label="e"]
     
-    node1 -> node2 [arrowhead="empty",color="#15ef10",tooltip="a\n   ->\nb",]
-    node1 -> node5 [arrowhead="empty",color="#ef3f3f",tooltip="a\n   ->\ne",]
-    node2 -> node3 [arrowhead="empty",color="#15ef10",tooltip="b\n   ->\nc",]
-    node3 -> node4 [arrowhead="empty",color="#15ef10",tooltip="c\n   ->\nd",]
-    node4 -> node5 [arrowhead="empty",color="#15ef10",tooltip="d\n   ->\ne",]
+    node1 -> node2 [arrowhead="vee",color="#15ef10",tooltip="a\n   ->\nb",]
+    node1 -> node5 [arrowhead="vee",color="#ef3f3f",tooltip="a\n   ->\ne",]
+    node2 -> node3 [arrowhead="vee",color="#15ef10",tooltip="b\n   ->\nc",]
+    node3 -> node4 [arrowhead="vee",color="#15ef10",tooltip="c\n   ->\nd",]
+    node4 -> node5 [arrowhead="vee",color="#15ef10",tooltip="d\n   ->\ne",]
 }

@@ -1,6 +1,6 @@
 digraph D {
-    label="group change diff";
     tooltip="group change diff";
+    label="group change diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
@@ -38,6 +38,6 @@ digraph D {
         node6 [color="#158510",fontcolor="#158510",fontname="Courier New",shape="rectangle",tooltip=":g3:b",label=":b"]
     }
     
-    node2 -> node4 [arrowhead="empty",color="#ff0000",tooltip=":g1:a\n   ->\n:g2:b",]
-    node2 -> node6 [arrowhead="empty",color="#158510",tooltip=":g1:a\n   ->\n:g3:b",]
+    node2 -> node4 [arrowhead="vee",color="#ff0000",tooltip=":g1:a\n   ->\n:g2:b",]
+    node2 -> node6 [arrowhead="vee",color="#158510",tooltip=":g1:a\n   ->\n:g3:b",]
 }

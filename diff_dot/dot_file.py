@@ -23,6 +23,8 @@ class Props(object):
             value = self.props[key]
             if type(value) is bool:
                 yield f'{key}={"true" if value else "false"}'
+            elif type(value) is str and value.startswith("< ") and value.endswith(" >"):
+                yield f'{key}={value}'
             else:
                 yield f'{key}="{value}"'
 
@@ -45,10 +47,12 @@ class Props(object):
 
 
 class Link(object):
-    def __init__(self, u: "Node", v: "Node"):
+    def __init__(self, u: "Node", v: "Node", props: Optional[Props] = None):
         self.u = u
         self.v = v
         self.props = Props()
+        if props:
+            self.props.copy_from(props)
 
     def __str__(self):
         return f'{self.u} -> {self.v}'
@@ -97,7 +101,10 @@ class Dot(object):
         self._cluster_nodes = {}
         self._root_props = Props()
         self._node_default_style = Props()
+        self._edge_default_style = Props()
         self._subgraph_default_style = Props()
+        if tooltip:
+            self._root_props["tooltip"] = self.escape_new_line(tooltip or caption)
         if caption:
             self.style_default_append("label", self.escape_new_line(caption))
             self.style_default_append("tooltip", self.escape_new_line(tooltip or caption))
@@ -123,6 +130,9 @@ class Dot(object):
 
     def node_style_default_append(self, param_key, param_value):
         self._node_default_style[param_key] = param_value
+
+    def edge_style_default_append(self, param_key, param_value):
+        self._edge_default_style[param_key] = param_value
 
     def subgraph_style_default_append(self, param_key, param_value):
         self._subgraph_default_style[param_key] = param_value
@@ -173,10 +183,16 @@ class Dot(object):
         return f"{from_node.name} -> {to_node.name} [{props}]"
 
     def write_node(self, writer, node):
+        def label_line(node):
+            if node.label.startswith("< ") and node.label.endswith(" >"):
+                return f'label={node.label}'
+            else:
+                return f'label="{node.label}"'
+
         if node.children:
             writer.write_line(f'subgraph {node.cluster_name} {{ /* {node.label} */')
             with writer.indent():
-                writer.write_line(f'label="{node.label}";')
+                writer.write_line(f"{label_line(node)};")
                 props = self._subgraph_default_style.override(node.props)
                 writer.write_props(props)
                 writer.write_line()
@@ -184,10 +200,10 @@ class Dot(object):
                     self.write_node(writer, child)
             writer.write_line("}")
         else:
-            writer.write_line(f'{node.name} [{self._node_default_style.override(node.props)}label="{node.label}"]')
+            writer.write_line(f'{node.name} [{self._node_default_style.override(node.props)}{label_line(node)}]')
 
     def new_link(self, node_u: Node, node_v: Node):
-        link = Link(node_u, node_v)
+        link = Link(node_u, node_v, self._edge_default_style)
         self._links.append(link)
         return link
 
@@ -203,6 +219,7 @@ class Dot(object):
             cluster_node = self.new_item(label="", full_name="", parent=node)
             cluster_node.props.copy_from(node.props)
             cluster_node.props["shape"] = "point"
+            self._cluster_nodes[node] = cluster_node
         return cluster_node
 
 

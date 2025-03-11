@@ -1,6 +1,6 @@
 digraph D {
-    label="connection made transitive diff";
     tooltip="connection made transitive diff";
+    label="connection made transitive diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -9,5 +9,5 @@ digraph D {
     
     node2 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip="c",label="c"]
     
-    node1 -> node2 [arrowhead="empty",color="#ef3f3f",style="dashed",tooltip="a\n   ->\nc",]
+    node1 -> node2 [arrowhead="vee",color="#ef3f3f",style="dashed",tooltip="a\n   ->\nc",]
 }

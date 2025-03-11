@@ -1,6 +1,6 @@
 digraph D {
-    label="new connection in group diff";
     tooltip="new connection in group diff";
+    label="new connection in group diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -17,5 +17,5 @@ digraph D {
         node3 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g1:c",label=":c"]
     }
     
-    node2 -> node3 [arrowhead="empty",color="#15ef10",tooltip=":g1:a\n   ->\n:g1:c",]
+    node2 -> node3 [arrowhead="vee",color="#15ef10",tooltip=":g1:a\n   ->\n:g1:c",]
 }

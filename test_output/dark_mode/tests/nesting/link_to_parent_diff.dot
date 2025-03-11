@@ -1,6 +1,6 @@
 digraph D {
-    label="link to parent diff";
     tooltip="link to parent diff";
+    label="link to parent diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -76,10 +76,10 @@ digraph D {
         node10 [color="#ffffff",fontcolor="#ffffff",fontname="Courier New",shape="rectangle",tooltip=":g6:a",label=":a"]
     }
     
-    node12 -> node14 [arrowhead="empty",color="#15ef10",lhead="cluster_node13",tooltip=":g7:a\n   ->\n:g8",]
-    node12 -> node14 [arrowhead="empty",color="#ef3f3f",tooltip=":g7:a\n   ->\n:g8:a",]
-    node2 -> node3 [arrowhead="empty",color="#15ef10",tooltip=":g1:a\n   ->\n:g2",]
-    node4 -> node6 [arrowhead="empty",color="#15ef10",tooltip=":g3\n   ->\n:g4:a",]
-    node8 -> node10 [arrowhead="empty",color="#15ef10",ltail="cluster_node7",tooltip=":g5\n   ->\n:g6:a",]
-    node8 -> node10 [arrowhead="empty",color="#ef3f3f",tooltip=":g5:a\n   ->\n:g6:a",]
+    node12 -> node14 [arrowhead="vee",color="#15ef10",lhead="cluster_node13",tooltip=":g7:a\n   ->\n:g8",]
+    node12 -> node14 [arrowhead="vee",color="#ef3f3f",tooltip=":g7:a\n   ->\n:g8:a",]
+    node2 -> node3 [arrowhead="vee",color="#15ef10",tooltip=":g1:a\n   ->\n:g2",]
+    node4 -> node6 [arrowhead="vee",color="#15ef10",tooltip=":g3\n   ->\n:g4:a",]
+    node8 -> node10 [arrowhead="vee",color="#15ef10",ltail="cluster_node7",tooltip=":g5\n   ->\n:g6:a",]
+    node8 -> node10 [arrowhead="vee",color="#ef3f3f",tooltip=":g5:a\n   ->\n:g6:a",]
 }

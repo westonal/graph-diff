@@ -1,6 +1,6 @@
 digraph D {
-    label="removed orphaned node diff";
     tooltip="removed orphaned node diff";
+    label="removed orphaned node diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";

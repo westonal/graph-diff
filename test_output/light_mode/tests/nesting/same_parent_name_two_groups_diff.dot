@@ -1,6 +1,6 @@
 digraph D {
-    label="same parent name two groups diff";
     tooltip="same parent name two groups diff";
+    label="same parent name two groups diff";
     bgcolor="#ffffff";
     fontcolor="#000000";
     fontname="Courier New";
@@ -46,7 +46,7 @@ digraph D {
         }
     }
     
-    node3 -> node6 [arrowhead="empty",color="#000000",tooltip=":g1:p:a\n   ->\n:g2:p:a",]
-    node3 -> node7 [arrowhead="empty",color="#158510",tooltip=":g1:p:a\n   ->\n:g2:p:c",]
-    node6 -> node7 [arrowhead="empty",color="#158510",tooltip=":g2:p:a\n   ->\n:g2:p:c",]
+    node3 -> node6 [arrowhead="vee",color="#000000",tooltip=":g1:p:a\n   ->\n:g2:p:a",]
+    node3 -> node7 [arrowhead="vee",color="#158510",tooltip=":g1:p:a\n   ->\n:g2:p:c",]
+    node6 -> node7 [arrowhead="vee",color="#158510",tooltip=":g2:p:a\n   ->\n:g2:p:c",]
 }

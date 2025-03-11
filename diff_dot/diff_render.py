@@ -53,15 +53,19 @@ class Renderer(object):
                  style: DotStyle = None,
                  caption: str = "",
                  dark_mode: Optional[bool] = None,
+                 f_node_url=None,
+                 node_name_map=None,
                  ):
         if dark_mode:
             if style:
                 raise Exception("Do not specify both style and dark_mode")
             style = dark_mode_style
+        self.f_node_url = f_node_url
         self.graph_delta = graph_delta
         self.style = style or light_mode_style
         self.nodes = {}
         self.caption = caption
+        self.node_name_map = node_name_map
 
     def _find_parent(self, dot: Dot, parents_with_state: [str], parent=None):
         if len(parents_with_state) > 1:
@@ -74,7 +78,8 @@ class Renderer(object):
         if not parent_node:
             parent_name, state = parents_with_state[0]
             full_name = f"{parent.full_name}{parent_name}" if parent else parent_name
-            parent_node = dot.new_item(label=parent_name, parent=parent, full_name=full_name)
+            node_name = self.node_name_map.get(full_name) if self.node_name_map else None
+            parent_node = dot.new_item(label=parent_name, parent=parent, full_name=full_name, node_name=node_name)
             if state == "newer":
                 color = self.style.new_color
             elif state == "older":
@@ -84,6 +89,8 @@ class Renderer(object):
             dot.property_append(parent_node, "color", color or self.style.group_border_color)
             dot.property_append(parent_node, "fontcolor", color or self.style.group_title_color)
             dot.property_append(parent_node, "tooltip", Dot.escape_new_line(parent_node.full_name))
+            if self.f_node_url:
+                dot.property_append(parent_node, "URL", self.f_node_url(parent_node.full_name))
             self.nodes[key] = parent_node
         return parent_node
 
@@ -93,12 +100,13 @@ class Renderer(object):
 
     @cached_property
     def dot(self) -> Dot:
-        dot = Dot(self.caption)
+        dot = Dot(self.caption, tooltip=self.caption)
         dot.style_default_append("bgcolor", self.style.bg_color)
         dot.style_default_append("fontcolor", self.style.fg_color)
         dot.style_default_append("fontname", self.style.font_name)
         dot.node_style_default_append("shape", "rectangle")
         dot.node_style_default_append("fontname", self.style.font_name)
+        dot.edge_style_default_append("arrowhead", "vee")
         dot.subgraph_style_default_append("style", "rounded")
         dot.subgraph_style_default_append("fontname", self.style.font_name)
         new_nodes = self.graph_delta.nodes(data="new", default=False)
@@ -113,7 +121,10 @@ class Renderer(object):
             if node_parent:
                 parent_node = self._find_parent(dot, node_parent)
             label = labels[node] or node
-            dot_node = dot.new_item(label=label, full_name=full_names[node] or label, parent=parent_node)
+            m_label = Dot.escape_new_line(label)
+            node_name = self.node_name_map.get(full_names[node]) if self.node_name_map else None
+            dot_node = dot.new_item(label=m_label, full_name=full_names[node] or label, parent=parent_node,
+                                    node_name=node_name)
             self.nodes[node] = dot_node
             if new_nodes[node]:
                 color = self.style.new_color
@@ -126,6 +137,16 @@ class Renderer(object):
             dot.property_append(dot_node, "color", color)
             dot.property_append(dot_node, "fontcolor", color)
             dot.property_append(dot_node, "tooltip", Dot.escape_new_line(dot_node.full_name))
+            if nodes_data[node].get("highlight"):
+                dot.property_append(dot_node, "fillcolor", "#add8e6")
+                dot.property_append(dot_node, "style", "filled")
+            else:
+                fillcolor = nodes_data[node].get("fillcolor")
+                if fillcolor is not None:
+                    dot.property_append(dot_node, "fillcolor", fillcolor)
+                    dot.property_append(dot_node, "style", "filled")
+            if self.f_node_url:
+                dot.property_append(dot_node, "URL", self.f_node_url(node))
         for u, v, data in self.graph_delta.edges.data():
             link = dot.new_link(self.nodes[u], self.nodes[v])
             if data.get("new"):
@@ -137,7 +158,6 @@ class Renderer(object):
             if data.get("transitive"):
                 color = self.style.transitive_color or color
             dot.property_append(link, "color", color)
-            dot.property_append(link, "arrowhead", "empty")
             dot.property_append(link, "tooltip",
                                 Dot.escape_new_line(f"{self.nodes[u].full_name}\n   ->\n{self.nodes[v].full_name}"))
 

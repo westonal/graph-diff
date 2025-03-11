@@ -48,7 +48,8 @@ def run_tests(path, update, dark_mode: bool, include_shortest_transitive_path: b
         action = "Running" if not update else "Updating"
         rprint(f"[yellow][bold]{action} test suite{' ([blue]dark mode[/])' if dark_mode else ''}: [cyan]{path}[/cyan]")
         for file_path in sorted(map(lambda p: os.path.join(path, p), os.listdir(path)), key=lambda f: os.path.isdir(f)):
-            passed, failed = run_tests(file_path, update=update, indent=indent + 1, dark_mode=dark_mode, include_shortest_transitive_path=include_shortest_transitive_path)
+            passed, failed = run_tests(file_path, update=update, indent=indent + 1, dark_mode=dark_mode,
+                                       include_shortest_transitive_path=include_shortest_transitive_path)
             passed_count += passed
             failed_count += failed
     return passed_count, failed_count

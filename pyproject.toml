@@ -1,6 +1,6 @@
 [project]
 name = "diff-dot"
-version = "2025.3.3.1"
+version = "2025.3.10.1"
 description = "Compare Directional Graphs"
 readme = "README.md"
 requires-python = ">=3.12"

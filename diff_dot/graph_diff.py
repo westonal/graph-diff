@@ -55,10 +55,12 @@ def compare_graph(older: DiGraph,
     new_nodes = newer.nodes - older.nodes if include_new else []
     for new_node in new_nodes:
         graph.add_node(new_node)
+        visible_nodes.add(new_node)
         graph.nodes[new_node]["new"] = True
     old_nodes = older.nodes - newer.nodes if include_old else []
     for old_node in old_nodes:
         graph.add_node(old_node)
+        visible_nodes.add(old_node)
         graph.nodes[old_node]["old"] = True
 
     if include_shortest_transitive_path:
@@ -133,8 +135,10 @@ def compare_graph(older: DiGraph,
             if parents:
                 states = list(get_states(parents))
                 graph.nodes[node]["parent"] = states
-                graph.nodes[node]["label"] = name
                 graph.nodes[node]["full_name"] = node
+            else:
+                graph.nodes[node]["full_name"] = name
+            graph.nodes[node]["label"] = name
 
     return graph
 

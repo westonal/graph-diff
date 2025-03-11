@@ -1,6 +1,6 @@
 digraph D {
-    label="group change inside unchanging group diff";
     tooltip="group change inside unchanging group diff";
+    label="group change inside unchanging group diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -46,6 +46,6 @@ digraph D {
         }
     }
     
-    node2 -> node5 [arrowhead="empty",color="#ef3f3f",tooltip=":g1:a\n   ->\n:gx:g2:b",]
-    node2 -> node7 [arrowhead="empty",color="#15ef10",tooltip=":g1:a\n   ->\n:gx:g3:b",]
+    node2 -> node5 [arrowhead="vee",color="#ef3f3f",tooltip=":g1:a\n   ->\n:gx:g2:b",]
+    node2 -> node7 [arrowhead="vee",color="#15ef10",tooltip=":g1:a\n   ->\n:gx:g3:b",]
 }

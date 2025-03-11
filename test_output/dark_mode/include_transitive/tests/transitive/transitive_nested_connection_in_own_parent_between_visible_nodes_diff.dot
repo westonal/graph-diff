@@ -1,6 +1,6 @@
 digraph D {
-    label="transitive nested connection in own parent between visible nodes diff";
     tooltip="transitive nested connection in own parent between visible nodes diff";
+    label="transitive nested connection in own parent between visible nodes diff";
     bgcolor="#222222";
     fontcolor="#ffffff";
     fontname="Courier New";
@@ -29,8 +29,8 @@ digraph D {
         node6 [color="#15ef10",fontcolor="#15ef10",fontname="Courier New",shape="rectangle",tooltip=":parent:d",label=":d"]
     }
     
-    node2 -> node5 [arrowhead="empty",color="#7f7f7f",tooltip=":other:b\n   ->\n:parent:c",]
-    node4 -> node2 [arrowhead="empty",color="#7f7f7f",tooltip=":parent:a\n   ->\n:other:b",]
-    node4 -> node6 [arrowhead="empty",color="#15ef10",tooltip=":parent:a\n   ->\n:parent:d",]
-    node5 -> node6 [arrowhead="empty",color="#15ef10",tooltip=":parent:c\n   ->\n:parent:d",]
+    node2 -> node5 [arrowhead="vee",color="#7f7f7f",tooltip=":other:b\n   ->\n:parent:c",]
+    node4 -> node2 [arrowhead="vee",color="#7f7f7f",tooltip=":parent:a\n   ->\n:other:b",]
+    node4 -> node6 [arrowhead="vee",color="#15ef10",tooltip=":parent:a\n   ->\n:parent:d",]
+    node5 -> node6 [arrowhead="vee",color="#15ef10",tooltip=":parent:c\n   ->\n:parent:d",]
 }
